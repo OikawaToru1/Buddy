@@ -1,40 +1,40 @@
 import { useForm } from "react-hook-form";
 import type { SubmitHandler } from "react-hook-form";
 import axios from "axios";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { IoMdAdd } from "react-icons/io";
 
 type file = {
   fileName: string;
-  uploader?: string;
+  uploader?: string | "Anonymous";
 };
 
 function UploadFile() {
-  const { register, handleSubmit, reset } = useForm<file>();
+  const [fileSelected, setFileSelected] = useState(false);  
+  const { register, handleSubmit, reset, watch } = useForm<file>();
 
+  console.log(watch("fileName"), "Selected file");
+    const onSubmit: SubmitHandler<file> = (data) => {
+      const formData = new FormData();
+      formData.append("file", data.fileName[0]);
 
-  const onSubmit: SubmitHandler<file> = (data) => {
-    const formData = new FormData();
-    formData.append("file", data.fileName[0]);
-    console.log(data);
-    console.log(formData);
-    if (formData) {
-      axios
-        .post("http://localhost:3000/api/files", formData)
-        .then((res) => {
-          console.log(res);
-        })
-        .catch((err) => {
-          console.log(err, "Error uploading file");
-        });
-    }
-    reset();
-  };
+      if (formData) {
+        axios
+          .post("http://localhost:3000/api/files", formData)
+          .then((res) => {
+            console.log(res);
+          })
+          .catch((err) => {
+            console.log(err, "Error uploading file");
+          });
+      }
+      reset();
+    };
 
   useEffect(() => {
     axios
       .get("http://localhost:3000")
-      .then((res) => console.log(res, "API is working"))
+      .then((res) => console.log(res.data, "API is working"))
       .catch((err) => console.log(err, "API is not working"));
   }, []);
 
@@ -49,13 +49,24 @@ function UploadFile() {
           className="group  relative flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-2 border-gray-600 border-dashed bg-slate-200 transition-all hover:border-blue-400 hover:bg-blue-50 active:scale-95"
         >
           <div className="h-8 w-8 relative ">
-            <IoMdAdd className="h-8 w-8 text-black hover:text-blue-500" />
+            {fileSelected ? (
+              <h1 className="text-black font-semibold text-center">PDF</h1>
+            ) : (
+              <IoMdAdd className="h-8 w-8 text-black hover:text-blue-500" />
+            )}
           </div>
           <input
             type="file"
             id="fileInput"
             className="hidden"
-            {...register("fileName", { required: true })}
+            {...register("fileName", {
+              required: true,
+              onChange: (e) => {
+                setFileSelected(
+                  e.target.files && e.target.files.length > 0 ? true : false,
+                );
+              },
+            })}
           />
         </label>
       </div>
