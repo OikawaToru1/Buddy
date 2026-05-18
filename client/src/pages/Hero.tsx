@@ -2,6 +2,7 @@ import UploadFile from "../components/ui/UploadFile"
 import Files from "./Files"
 import ChatBox from "../components/ui/ChatBox"
 import { useState } from "react";
+import FileOptions from "../components/ui/FileOptions";
 import TabNavigation from "../components/ui/TabNavigation";
 
 interface tabProps {
@@ -45,6 +46,7 @@ function Hero() {
         </div>
 
       <ChatBox/>
+    <FileOptions/>
         
     </div>
 
