@@ -1,4 +1,5 @@
 import { useState } from "react";
+import {Link} from "react-router"
 import Portal from "./Portal";
 
 function Header() {
@@ -25,7 +26,9 @@ function Header() {
           </li>
           <li className="gap-2">
             <div className="h-10 w-10 bg-white  rounded-full"></div>
-            <p className="text-xs text-gray-400 text-center">Profile</p>
+            <p className="text-xs text-gray-400 text-center">
+              <Link to="/signup">Profile</Link>
+            </p>
           </li>
         </ul>
       </div>
