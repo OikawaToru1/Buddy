@@ -41,7 +41,7 @@ function FileOptions() {
         </button>
       </div>
 
-      <div className="w-full h-[600px] p-4">
+      <div className="w-full h-[200px] p-4">
         {activeOption === "createQuiz" && (
           <div className="h-full w-full">
             <QuizBox/>
