@@ -1,5 +1,6 @@
 import { useState } from "react";
 import QuizBox from "./QuizBox";
+import SummaryDisplay from "./SummaryDisplay";
 
 
 
@@ -49,16 +50,14 @@ function FileOptions() {
         )}
         {activeOption === "generateSummary" && (
           <div className="h-full w-full"  >
-            <h2 className="text-lg font-semibold mb-2">Summary Generated!</h2>
-            <p>Here is a summary of your file:</p>
-            {/* Summary content goes here */}
+            <SummaryDisplay summary="This is a sample summary." type="summary" />
           </div>
         )}
         {activeOption === "explainLikeIm5" && (
           <div className="h-full w-full">
             <h2 className="text-lg font-semibold mb-2">Explanation:</h2>
             <p>Here is an explanation of your file in simple terms:</p>
-            {/* Explanation content goes here */}
+            <SummaryDisplay summary="This is a sample explanation." type="explanation" />
           </div>
         )}
       </div>
