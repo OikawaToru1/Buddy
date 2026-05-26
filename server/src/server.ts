@@ -1,20 +1,18 @@
+import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 import express from 'express'
 import {upload} from './middlewares/multer.js'
 import cors from 'cors'
 import fileRouter from './routes/fileRouter.js'
+import conntectMongoDB from './db/db.js'
+dotenv.config({
+  path : './env'
+})
 
 const app = express();
 const port = 3000;
 
-// ;(async()=>{
-//   try {
-//     await mongoose.connect(`${process.env.MONGODB_URI}`);
-//   } catch (error) {
-//     console.log("Error", error );
-//     throw error;
-//   }
-// })()
+
 
 app.use(cors());
 app.use(express.json());
@@ -28,6 +26,7 @@ app.use('/api/files', fileRouter);
 
 
 
+conntectMongoDB();
 
 // app.post('/api/files',upload.single('file'), (req, res) => {
 //   console.log('Received file upload request');
