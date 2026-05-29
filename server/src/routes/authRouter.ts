@@ -1,5 +1,6 @@
 import { Router } from "express";
-import {registerUser, loginUser} from "../controllers/authController.js";
+import {verifyJWT} from '../middlewares/auth.js'
+import {registerUser, loginUser, logoutUser} from "../controllers/authController.js";
 
 import {upload} from '../middlewares/multer.js'
 
@@ -12,5 +13,6 @@ authRouter.get('/', (req, res) => {
 
 authRouter.post("/register", upload.single("avatar"), registerUser);
 authRouter.post("/login", loginUser);
+authRouter.post("/logout", verifyJWT, logoutUser);
 
 export default authRouter;
