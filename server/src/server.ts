@@ -4,9 +4,11 @@ import express from 'express'
 import {upload} from './middlewares/multer.js'
 import cors from 'cors'
 import fileRouter from './routes/fileRouter.js'
+import authRouter from './routes/authRouter.js'
 import conntectMongoDB from './db/db.js'
+import cookieParser from 'cookie-parser'
 dotenv.config({
-  path : './env'
+  path : './.env'
 })
 
 const app = express();
@@ -16,6 +18,7 @@ const port = 3000;
 
 app.use(cors());
 app.use(express.json());
+app.use(cookieParser());
 
 
 app.get('/', (req, res) => {
@@ -23,7 +26,7 @@ app.get('/', (req, res) => {
 })
 
 app.use('/api/files', fileRouter);
-
+app.use('/api/users', authRouter);
 
 
 conntectMongoDB();
