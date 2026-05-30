@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { set } from "react-hook-form";
+import axios from "axios";
 
 interface SignUpProps {
     fullName : string;
@@ -19,7 +19,6 @@ function Signup() {
     });
     const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        console.log(formData);
         if(formData.username && formData.email && formData.password) {
             setFormData({
               fullName : '',
@@ -28,8 +27,18 @@ function Signup() {
                 password: '',
                 avatar: undefined,
             });
-            alert("Sign up successful!");
+            axios.post("/api/auth/users/register", formData, {withCredentials : true})
+              .then((response) => {
+                console.log("Sign up successful:", response.data);
+                // Handle successful sign up, e.g., redirect to login page
+              })
+              .catch((error) => {
+                console.error("Sign up failed:", error.response?.data || error.message);
+                // Handle sign up failure, e.g., show error message to user
+              });
+
         } else {
+          console.warn("Please fill in all fields.");
             alert("Please fill in all fields.");
         }
         // Here you would typically send the data to your backend API
