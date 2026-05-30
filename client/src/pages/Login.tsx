@@ -1,4 +1,5 @@
 import { useState } from "react";
+import axios from "axios";
 
 interface LoginProps  {
     password : string;
@@ -13,8 +14,29 @@ function Login() {
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
+    axios.post("/api/auth/login", formData, {withCredentials : true})
+      .then((response) => {
+        console.log("Login successful:", response.data);
+        // Handle successful login, e.g., redirect to dashboard
+      })
+      .catch((error) => {
+        console.error("Login failed:", error.response?.data || error.message);
+        // Handle login failure, e.g., show error message to user
+      });
   };
+
+  const handleLogOut = () => {
+    axios.post("/api/auth/logout", {}, {withCredentials : true})
+      .then((response) => {
+        console.log("Logout successful:", response.data);
+        // Handle successful logout, e.g., redirect to login page
+      })
+      .catch((error) => {
+        console.error("Logout failed:", error.response?.data || error.message);
+        // Handle logout failure, e.g., show error message to user
+      });
+  }
+  
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
