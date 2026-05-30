@@ -1,4 +1,4 @@
-import  { useState, useEffect ,useRef } from 'react'
+import  { useState, useEffect  } from 'react'
 
 interface QuizBoxProps {
 questions: {
@@ -12,7 +12,7 @@ function QuizBox() {
     const [questions, setQuestions ]= useState<QuizBoxProps['questions']>([]);
     const [selectedOption, setSelectedOption] = useState<{ userchoice: string, question : string, answer: string }[]>([]);
     const [activeOptions, setActiveOptions] = useState< string []>([]);
-    const [submitted, handleSubmitted] = useState<boolean>(false);
+    const [submitted, setSubmitted] = useState<boolean>(false);
     const [score, setScore] = useState<number>(0);
 
     const handleSelectedOption = (current_question : string, option: string, answer : string) => {
@@ -54,7 +54,7 @@ function QuizBox() {
         })
         console.log("Final Score is ", score);
         setScore(score);
-        handleSubmitted(true);
+        setSubmitted(true);
     }
 
     useEffect(() => {
