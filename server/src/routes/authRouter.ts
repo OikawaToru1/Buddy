@@ -11,6 +11,9 @@ authRouter.get('/', (req, res) => {
   res.json({ message: 'Auth route is working' });
 });
 
+authRouter.get('/test',(req, res) => {
+  res.send("Auth test route is working");
+});
 authRouter.post("/register", upload.single("avatar"), registerUser);
 authRouter.post("/login", loginUser);
 authRouter.post("/logout", verifyJWT, logoutUser);
