@@ -67,12 +67,10 @@ const generateAccessAndRefreshTokens = async (userId : string)=>{
 }
 
 async function loginUser(req : any, res : any){
-    console.log('Received user login request');
-    console.log(req.body);
 
     const {email, username, password} = req.body;
 
-    if(!username || !email)
+    if(! (username || email))
     {
         return res.status(400).json({message : "Username and email are required"});
     }
@@ -98,7 +96,6 @@ async function loginUser(req : any, res : any){
         }
 
         const {accessToken , refreshToken} = await generateAccessAndRefreshTokens(userExists._id); 
-
         const loggedInUser = await User.findById(userExists._id).select("-password -refreshToken");
         if(!loggedInUser) return res.status(500).json({message : "Failed to retrieve user data after login"});
 
@@ -123,7 +120,7 @@ const logoutUser = async (req : any, res : any) => {
  
     await User.findByIdAndUpdate(req.user._id,
         {$set : {refreshToken : null}},
-        {new : true, runValidators : false}
+        {new : true}
     );
 
     const options = {
