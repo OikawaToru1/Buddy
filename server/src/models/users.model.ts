@@ -41,7 +41,7 @@ userSchema.methods.isPasswordCorrect = async function(password : string)
 userSchema.methods.generateAccessToken = function(){
     const expiry = process.env.ACCESS_TOKEN_EXPIRY!;
 
-    jwt.sign ({id: this._id} ,
+    return jwt.sign ({id: this._id} ,
         process.env.ACCESS_TOKEN_SECRET!,
         {expiresIn : expiry} as SignOptions
      )
