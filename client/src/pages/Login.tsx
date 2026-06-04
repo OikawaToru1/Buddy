@@ -1,22 +1,27 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
+import { useDispatch } from "react-redux";
+import { loginSuccess, logout } from "../rtk/slice/authSlice";
 
 interface LoginProps  {
     password : string;
-    username : string;
+    email : string;
 }
 
 function Login() {
   const [formData, setFormData] = useState<LoginProps>({
-    username: '',
+    email: '',
     password: '',
   });
+  const dispatch = useDispatch();
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    axios.post("/api/auth/login", formData, {withCredentials : true})
+    console.log("Form Data is ", formData);
+    axios.post("/api/users/login", formData, {withCredentials : true})
       .then((response) => {
         console.log("Login successful:", response.data);
+
         // Handle successful login, e.g., redirect to dashboard
       })
       .catch((error) => {
@@ -28,14 +33,20 @@ function Login() {
   const handleLogOut = () => {
     axios.post("/api/auth/logout", {}, {withCredentials : true})
       .then((response) => {
-        console.log("Logout successful:", response.data);
+        console.log("Logout successful:", response.data.message);
         // Handle successful logout, e.g., redirect to login page
       })
       .catch((error) => {
         console.error("Logout failed:", error.response?.data || error.message);
         // Handle logout failure, e.g., show error message to user
       });
-  }
+  };
+
+    useEffect(() => {
+      axios.get('/api/users/test')
+      .then(res=>{console.log("Test API response:", res.data)})
+      .catch(err=>{console.error("Test API error:", err)});
+    },[]);
   
 
   return (
@@ -43,16 +54,16 @@ function Login() {
       <h1 className="text-4xl font-bold mb-8">Login</h1>
       <form className="w-full max-w-sm bg-gray-800/50 rounded-lg p-6" onSubmit={handleLogin}>
         <div className="mb-4">
-          <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="username">
-            Username
+          <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="email">
+            email
           </label>
           <input
             className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-            id="username"
+            id="email"
             type="text"
-            placeholder="Username"
-            value={formData.username}
-            onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+            placeholder="email"
+            value={formData.email}
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
           />
         </div>
         <div className="mb-6">
