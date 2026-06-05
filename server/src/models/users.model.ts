@@ -55,10 +55,3 @@ userSchema.methods.generateRefreshToken = function(){
 
 export const User = model("User",userSchema);
 
-const aniket = new User({
-    fullName : "Aniket Adhikari",
-    email : "aniket@example.com",
-    password : "password123",
-}); 
-
-console.log(aniket);
