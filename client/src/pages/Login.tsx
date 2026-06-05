@@ -1,7 +1,10 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
-import { useDispatch } from "react-redux";
+import { useSelector,useDispatch } from "react-redux";
+import type { RootState } from "../rtk/store.js";
 import { loginSuccess, logout } from "../rtk/slice/authSlice";
+import { useNavigate } from "react-router";
+
 
 interface LoginProps  {
     password : string;
@@ -13,7 +16,9 @@ function Login() {
     email: '',
     password: '',
   });
+  const authState = useSelector((state: RootState)=> state.auth.isAuthenticated);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -21,7 +26,12 @@ function Login() {
     axios.post("/api/users/login", formData, {withCredentials : true})
       .then((response) => {
         console.log("Login successful:", response.data);
-
+        if(response.data && response.data.user){
+          dispatch(loginSuccess(
+            response.data.user
+          ))
+        }
+        navigate("/home");
         // Handle successful login, e.g., redirect to dashboard
       })
       .catch((error) => {
@@ -34,6 +44,7 @@ function Login() {
     axios.post("/api/auth/logout", {}, {withCredentials : true})
       .then((response) => {
         console.log("Logout successful:", response.data.message);
+        dispatch(logout());
         // Handle successful logout, e.g., redirect to login page
       })
       .catch((error) => {
@@ -58,7 +69,7 @@ function Login() {
             email
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
             id="email"
             type="text"
             placeholder="email"
@@ -71,10 +82,10 @@ function Login() {
             Password
           </label>
           <input
-            className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 mb-3 leading-tight focus:outline-none focus:shadow-outline"
+            className="shadow appearance-none border rounded w-full py-2 px-3 text-white mb-3 leading-tight focus:outline-none focus:shadow-outline"
             id="password"
             type="password"
-            placeholder="******************"
+            placeholder="*******"
             value={formData.password}
             onChange={(e) => setFormData({ ...formData, password: e.target.value })}
           />
