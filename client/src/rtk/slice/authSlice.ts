@@ -4,8 +4,12 @@ export interface AuthState {
     isAuthenticated: boolean;
     user: {
         id: string;
-        username: string;
+        fullName: string | null;
         email: string;
+        fileHistory : [string] | null;
+        avatar : string | null;
+        createdAt : string;
+        updatedAt : string;
     } | null;
 }
 
