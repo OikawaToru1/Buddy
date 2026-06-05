@@ -1,6 +1,7 @@
 import { Router } from "express";
 import {getFileByName, uploadFile, handleQuery} from '../controllers/fileController.js'
 import {upload} from '../middlewares/multer.js'
+import { verifyJWT } from "../middlewares/auth.js";
 
 const fileRouter = Router();
 
@@ -11,9 +12,9 @@ fileRouter.get('/', (req, res) => {
 
 fileRouter.get('/file/:fileName', getFileByName);
 
-fileRouter.post("/",upload.single('file'),uploadFile);
+fileRouter.post("/",verifyJWT,upload.single('file'),uploadFile);
 
-fileRouter.post("/query", handleQuery);
+fileRouter.post("/query", verifyJWT, handleQuery);
 
 
 
