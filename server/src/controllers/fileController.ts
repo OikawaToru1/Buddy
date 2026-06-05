@@ -9,6 +9,7 @@ import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 import Groq from 'groq-sdk';
 import { response } from 'express';
 import {File} from '../models/files.models.js'
+import { User } from '../models/users.model.js';
 
 interface BuddyMetadata extends RecordMetadata {
     document_id : string;
@@ -139,8 +140,14 @@ async function uploadFile(req : any, res : any){
             owner : user._id, 
          });
 
-          console.log("File record created in the database is ", fileRecord);
+        await User.findByIdAndUpdate(user._id, {
+          $push: { fileHistory: fileRecord._id },
+        });
 
+        const userWithFiles = await User.findById(user._id).populate("fileHistory").select("-password -refreshToken");
+        console.log("File record created in the database and populated in user ", fileRecord, userWithFiles);
+
+        res.json({message: "done", data: userWithFiles});
           
 
         
