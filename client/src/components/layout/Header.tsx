@@ -1,10 +1,28 @@
 import { useState } from "react";
+import { useSelector } from "react-redux";
+import type { RootState } from "../../rtk/store.js";
 import {Link} from "react-router"
 import Portal from "./Portal";
+import axios from "axios";
+import { useDispatch } from "react-redux";
+import { logout } from "../../rtk/slice/authSlice";
+import { useNavigate } from "react-router";
 
 function Header() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const authState = useSelector((state: RootState) => state.auth.isAuthenticated);
+  const authUser = useSelector((state: RootState) => state.auth.user?.fullName);
+  const userAvatar = useSelector((state: RootState) => state.auth.user?.avatar);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
+  const handleLogout = () => {
+    axios.post("/api/users/logout")
+      .then(() => {
+        dispatch(logout());
+        navigate("/login");
+      });
+  }
   return (
     <nav
       className=" top-0 left-0 w-full h-[70px]  flex justify-between items-center lg:px-16 md:px-8 px-6 py-5 
@@ -25,11 +43,23 @@ function Header() {
             Create Note +{" "}
           </li>
           <li className="gap-2">
-            <div className="h-10 w-10 bg-white  rounded-full"></div>
-            <p className="text-xs text-gray-400 text-center">
-              <Link to="/signup">Profile</Link>
-            </p>
+            {authState ? (
+              <>
+                <img src={userAvatar || undefined} alt="Avatar" className="h-10 w-10 bg-white  rounded-full" />
+                <p className="text-xs text-gray-400 text-center">
+                  <Link to="/profile">{authUser}</Link>
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="h-10 w-10 bg-white  rounded-full"></div>
+                <p className="text-xs text-gray-400 text-center">
+                  <Link to="/signup">Profile</Link>
+                </p>
+              </>
+            )}
           </li>
+          {authState && <button className="border rounded-lg px-2 py-1" onClick={handleLogout}>Logout</button>}
         </ul>
       </div>
       <Portal open={isModalOpen} onClose={() => setIsModalOpen(false)} />
