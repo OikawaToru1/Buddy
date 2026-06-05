@@ -5,9 +5,12 @@ import { verifyJWT } from "../middlewares/auth.js";
 
 const fileRouter = Router();
 
-fileRouter.get('/', (req, res) => {
-  console.log('Received request for file list');
-  res.json({ message: 'List of files uploaded previously' });
+fileRouter.get('/',verifyJWT, (req: any, res: any) => {
+  const user = req.user;
+  const fileHistory = user.fileHistory || [];
+  console.log("User's file history is ", fileHistory);
+
+  res.json({ message: 'List of files uploaded previously', files: fileHistory });
 });
 
 fileRouter.get('/file/:fileName', getFileByName);
