@@ -8,6 +8,7 @@ import { Pinecone, type PineconeRecord, type RecordMetadata } from '@pinecone-da
 import { RecursiveCharacterTextSplitter } from '@langchain/textsplitters';
 import Groq from 'groq-sdk';
 import { response } from 'express';
+import {File} from '../models/files.models.js'
 
 interface BuddyMetadata extends RecordMetadata {
     document_id : string;
@@ -91,10 +92,11 @@ async function parsePDF(filePath : string){
 }
 
 async function uploadFile(req : any, res : any){
-    console.log('Received file upload request');
-    console.log(req.file);
-    // res.json({ message: 'File uploaded successfully', file: req.file });
+  console.log(req)
+  const user = req.user;
+
     try {
+        const fileName = req.file.originalname;
         const uploadResponse = await uploadToCloudinary(req.file.path);
         console.log(uploadResponse?.secure_url);
         if(!uploadResponse?.secure_url) {
@@ -128,10 +130,20 @@ async function uploadFile(req : any, res : any){
          console.log("Response of individual chunking embeeding is. as below ", response.embeddings)
 
 
-         const upsertResponse = await upsertToPinecone(response.embeddings || [], chunks, `doc_${Date.now()}`, "user_123");
-          console.log("Pinecone upsert response is ", upsertResponse);
+         const upsertResponse = await upsertToPinecone(response.embeddings || [], chunks, `${fileName}_${Date.now()}`, user._id);
 
+         const fileRecord = await File.create({
+            fileId : `${fileName}_${Date.now()}`,
+            fileName,
+            path : uploadResponse.secure_url,
+            owner : user._id, 
+         });
 
+          console.log("File record created in the database is ", fileRecord);
+
+          
+
+        
         
          
 
@@ -176,7 +188,7 @@ async function upsertToPinecone(embeddings : any[], chunks : string[], documentI
   console.log("New pinecone records sample to upsert are below", records);
 
   try {
-    const namespace = pc.index("buddy-index").namespace("buddy-namespace");
+    const namespace = pc.index("buddy-index").namespace(`buddy-namespace-${userId}`);
     const upsertResponse = await namespace.upsert({
       records,
     });
@@ -198,7 +210,7 @@ async function handleQuery(req : any, res : any){
          });
   console.log("Received query: ", userQuery);
   console.log("Received embedding: ", queryEmbedding.embeddings);
-  const namespace = pc.index("buddy-index").namespace("buddy-namespace");   
+  const namespace = pc.index("buddy-index").namespace(`buddy-namespace-${req.user._id}`);   
 
   if(!queryEmbedding.embeddings || queryEmbedding.embeddings.length === 0) {
     res.status(500).json({success: false, message: "Failed to generate embedding for the user query"});
