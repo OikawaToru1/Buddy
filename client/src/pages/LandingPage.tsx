@@ -17,12 +17,12 @@ function LandingPage() {
       </header>
       <main className="landing-main flex flex-col items-center justify-center h-[90vh] bg-gray-900 text-white">
         <h1 className="text-5xl font-bold mb-8">Welcome to Buddy</h1>
-        <p className="text-xl mb-12 text-center max-w-2xl">
+        <h2 className="text-xl mb-12 text-center max-w-2xl">
           Your ultimate companion for easily understanding notes. <br></br>
           <p className="text-sm text-gray-400">(Cheaper copy of notebooklm)</p>
          
           Sign up now to get started!
-        </p>
+        </h2>
         <a
           href="/signup"
           className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded focus:outline-none focus:shadow-outline"
