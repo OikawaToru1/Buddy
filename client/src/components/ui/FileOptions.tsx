@@ -5,12 +5,12 @@ import SummaryDisplay from "./SummaryDisplay";
 
 
 
-function FileOptions(selectedFile : {fileName: string, path: string} | null) {
+function FileOptions(selectedFile : {fileName: string, path: string, fileId: string} | null) {
   const [activeOption, setActiveOption] = useState<string | null>(null);
 
   const createQuiz = () => {
     setActiveOption("createQuiz");
-    axios.post("http://localhost:3000/api/files/create-quiz", {fileName: selectedFile?.fileName || ""}, { withCredentials: true })
+    axios.post("http://localhost:3000/api/files/create-quiz", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || ""}, { withCredentials: true })
       .then((res) => {
         console.log("Quiz created successfully: ", res.data);
       })
@@ -21,7 +21,7 @@ function FileOptions(selectedFile : {fileName: string, path: string} | null) {
   }
   const generateSummary = () => {
     setActiveOption("generateSummary");
-    axios.post("http://localhost:3000/api/files/generate-summary", {fileName: selectedFile?.fileName || ""}, { withCredentials: true })
+    axios.post("http://localhost:3000/api/files/generate-summary", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || ""}, { withCredentials: true })
       .then((res) => {
         console.log("Summary generated successfully: ", res.data);
       })
@@ -31,7 +31,7 @@ function FileOptions(selectedFile : {fileName: string, path: string} | null) {
   }
   const explainLikeIm5 = () => {
     setActiveOption("explainLikeIm5");
-    axios.post("http://localhost:3000/api/files/explain-like-im-5", {fileName: selectedFile?.fileName || ""}, { withCredentials: true })
+    axios.post("http://localhost:3000/api/files/explain-like-im-5", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || ""}, { withCredentials: true })
       .then((res) => {
         console.log("Explanation generated successfully: ", res.data);
       })
