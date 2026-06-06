@@ -13,8 +13,8 @@ import FileOptions from "../components/ui/FileOptions";
 // }
 
 function Hero() {
-  const [files, setFiles] = useState<{fileName: string, path: string}[]>([]);
-  const [selectedFile, setSelectedFile] = useState<{fileName: string, path: string} | null>(null);
+  const [files, setFiles] = useState<{fileName: string, path: string, fileId: string}[]>([]);
+  const [selectedFile, setSelectedFile] = useState<{fileName: string, path: string, fileId: string} | null>(null);
 
 
   // const tabs : tabProps[]  = [
@@ -50,7 +50,7 @@ function Hero() {
         res.data.fileHistory?.map((file: any) => {
           setFiles((prevFiles) => [
             ...prevFiles,
-            { fileName: file.fileName, path: file.path },
+            { fileName: file.fileName, path: file.path, fileId: file.fileId },
           ]);
         });
       })
@@ -65,9 +65,9 @@ function Hero() {
             <Files files={files} setSelectedFile={setSelectedFile} />
         </div>
 
-      <ChatBox fileName={selectedFile?.fileName || ""} path={selectedFile?.path || ""} />
+      <ChatBox fileName={selectedFile?.fileName || ""} path={selectedFile?.path || ""} fileId={selectedFile?.fileId || ""} />
 
-    <FileOptions fileName={selectedFile?.fileName || ""} path={selectedFile?.path || ""} />
+    <FileOptions fileName={selectedFile?.fileName || ""} path={selectedFile?.path || ""} fileId={selectedFile?.fileId || ""} />
         
     </div>
 
