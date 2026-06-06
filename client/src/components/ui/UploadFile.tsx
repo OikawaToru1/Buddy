@@ -20,7 +20,7 @@ function UploadFile() {
 
       if (formData) {
         axios
-          .post("http://localhost:3000/api/files", formData)
+          .post("http://localhost:3000/api/files", formData,{ withCredentials: true })
           .then((res) => {
             console.log(res);
           })
