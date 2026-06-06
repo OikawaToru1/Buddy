@@ -3,10 +3,15 @@ import {User} from "../models/users.model.js";
 
 
 export const verifyJWT = async(req : any, res : any, next : any) => {
-    const token = req.cookies?.accessToken || req.headers("Authorization")
+    console.log("Verifying JWT for incoming request...",req.cookies.accessToken || req.headers["Authorization"]);
+    const token = req.cookies?.accessToken || req.headers["Authorization"]
     ?.replace("Bearer", "");
 
-    if(!token) return res.status(401).json({message : "Unauthorized access"});
+    if(!token) { 
+        console.log("No token provided in request");
+         return res.status(401).json({message : "Unauthorized access"});
+        
+        }
 
     try{
         const decoded : any = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET !);
