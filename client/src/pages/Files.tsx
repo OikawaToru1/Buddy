@@ -1,5 +1,5 @@
 
-function Files({files,setSelectedFile} : {files: {fileName: string, path: string}[], setSelectedFile: React.Dispatch<React.SetStateAction<{fileName: string, path: string} | null>>}) {
+function Files({files,setSelectedFile} : {files: {fileName: string, path: string, fileId: string}[], setSelectedFile: React.Dispatch<React.SetStateAction<{fileName: string, path: string, fileId: string} | null>>}) {
 
 
   return (
