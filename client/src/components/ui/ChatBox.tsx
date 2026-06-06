@@ -27,32 +27,73 @@ function ChatBox(selectedFile : {fileName: string, path: string} | null) {
    }, []);
 
   return (
-    <div className="w-full md:w-2/3 h-full mr-4 bg-gray-800/50 rounded-xl border border-gray-600/50 flex flex-col justify-between ">
-      <div className="border-b border-gray-700 h-[50px]">
-        <h1 className="text-lg font-semibold px-4 py-2  text-white">Chat Box : {selectedFile?.fileName || "No file selected"}</h1>
+    <div className="w-full md:w-2/3 h-full mr-4 bg-gray-800/50 rounded-xl border border-gray-600/50 flex flex-col justify-between shadow-2xl backdrop-blur-sm">
+      {/* Header */}
+      <div className="border-b border-gray-700/60 h-[56px] flex items-center px-4 shrink-0">
+        <h1 className="text-sm font-semibold text-gray-200 flex items-center gap-2 truncate">
+         
+          Chat Box:{" "}
+          <span className="text-blue-400 font-medium truncate">
+            {selectedFile?.fileName || "No file selected"}
+          </span>
+        </h1>
       </div>
-      <div className="h-6/7 scroll-auto scrollbar-hide p-2 flex flex-col gap-2 overflow-y-auto">
-        { 
-          convo && <div>
-            {convo.map((item, index) => (
-              <div key={index} className={`my-2 mx-4 p-2 rounded-md ${item.from === "You" ? "bg-blue-600 text-white self-end" : "bg-gray-700 text-white self-start"}`}>
-                <p>{item.from} : {item.data}</p>
-              </div>
-            ))}
+
+      {/* Chat Messages Body */}
+      <div className="flex-1 p-4 flex flex-col overflow-y-auto space-y-4 custom-scrollbar">
+        {convo && (
+          <div className="flex flex-col space-y-3">
+            {convo.map((item, index) => {
+              const isYou = item.from === "You";
+              return (
+                <div
+                  key={index}
+                  className={`flex flex-col max-w-[80%] ${isYou ? "self-end items-end" : "self-start items-start"}`}
+                >
+                  {/* Optional tiny sender name tag */}
+                  <span className="text-[10px] text-gray-400 mb-1 px-1">
+                    {item.from}
+                  </span>
+
+                  <div
+                    className={`p-3 rounded-2xl text-sm leading-relaxed shadow-sm break-words
+                  ${
+                    isYou
+                      ? "bg-blue-600 text-white rounded-tr-none"
+                      : "bg-gray-700/60 text-gray-100 border border-gray-600/30 rounded-tl-none"
+                  }`}
+                  >
+                    <p>{item.data}</p>
+                  </div>
+                </div>
+              );
+            })}
           </div>
-        }
+        )}
       </div>
-      <div className=" h-[50px] w-full flex justify-between gap-4 border py-1 px-2 rounded-lg ring-1 focus-within:ring-2 focus-within:ring-blue-500 focus-within:border-2">
-        <input className="w-full border-none outline-none overflow-x-auto scroll-auto" type="text" value={query} 
-          onChange={(e) => setQuery(e.target.value)}
-          onKeyDown={(e)=>{
-            if(e.key === "Enter" && query.length>0)
-            {
-             handleSubmit()
-            }
-          }}
+
+      {/* Input Footer Area */}
+      <div className="p-3 bg-gray-800/40 border-t border-gray-700/50 shrink-0">
+        <div className="w-full flex items-center gap-2 bg-gray-900/40 border border-gray-600/50 rounded-xl p-1.5 focus-within:border-blue-500 focus-within:ring-2 focus-within:ring-blue-500/20 transition-all">
+          <input
+            className="w-full bg-transparent border-none outline-none text-sm text-gray-200 placeholder-gray-500 px-3 py-1.5 scrollbar-none"
+            type="text"
+            placeholder="Ask something about this file..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Enter" && query.length > 0) {
+                handleSubmit();
+              }
+            }}
           />
-        <button onClick={handleSubmit} className="bg-blue-600 w-1/6 rounded-md cursor-pointer hover:bg-blue-700 transition-colors duration-300 ">Send</button>
+          <button
+            onClick={handleSubmit}
+            className="bg-blue-600 text-white text-xs font-semibold px-4 py-2 rounded-lg cursor-pointer hover:bg-blue-500 active:scale-95 transition-all shrink-0 shadow-md"
+          >
+            Send
+          </button>
+        </div>
       </div>
     </div>
   );
