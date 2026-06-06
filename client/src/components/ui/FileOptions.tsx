@@ -1,20 +1,43 @@
 import { useState } from "react";
+import axios from "axios";
 import QuizBox from "./QuizBox";
 import SummaryDisplay from "./SummaryDisplay";
 
 
 
-function FileOptions() {
+function FileOptions(selectedFile : {fileName: string, path: string} | null) {
   const [activeOption, setActiveOption] = useState<string | null>(null);
 
   const createQuiz = () => {
     setActiveOption("createQuiz");
+    axios.post("http://localhost:3000/api/files/create-quiz", {fileName: selectedFile?.fileName || ""}, { withCredentials: true })
+      .then((res) => {
+        console.log("Quiz created successfully: ", res.data);
+      })
+      .catch((err) => {
+        console.log(err, "Error creating quiz");
+      });
+
   }
   const generateSummary = () => {
     setActiveOption("generateSummary");
+    axios.post("http://localhost:3000/api/files/generate-summary", {fileName: selectedFile?.fileName || ""}, { withCredentials: true })
+      .then((res) => {
+        console.log("Summary generated successfully: ", res.data);
+      })
+      .catch((err) => {
+        console.log(err, "Error generating summary");
+      });
   }
   const explainLikeIm5 = () => {
     setActiveOption("explainLikeIm5");
+    axios.post("http://localhost:3000/api/files/explain-like-im-5", {fileName: selectedFile?.fileName || ""}, { withCredentials: true })
+      .then((res) => {
+        console.log("Explanation generated successfully: ", res.data);
+      })
+      .catch((err) => {
+        console.log(err, "Error generating explanation");
+      });
   }
   return (
     <div className="w-full h-full md:w-1/3 mr-4 bg-gray-800/50 rounded-xl border border-gray-600/50 ">
