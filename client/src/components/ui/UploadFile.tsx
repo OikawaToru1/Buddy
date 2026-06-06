@@ -40,21 +40,43 @@ function UploadFile() {
 
   return (
     <form
-      className=" mx-auto w-2/3 py-8 flex flex-col items-center gap-4 bg-gray-800/50 rounded-xl border border-gray-600/50 mt-8"
+      className="mx-auto w-2/3 p-6 flex flex-col items-center gap-5 bg-gray-800/50 rounded-xl border border-gray-600/50 mt-8 shadow-xl backdrop-blur-sm"
       onSubmit={handleSubmit(onSubmit)}
     >
-      <div className="flex flex-col gap-2 items-center">
+      <div className="w-full flex flex-col items-center">
         <label
           htmlFor="fileInput"
-          className="group  relative flex h-16 w-16 cursor-pointer items-center justify-center rounded-full border-2 border-gray-600 border-dashed bg-slate-200 transition-all hover:border-blue-400 hover:bg-blue-50 active:scale-95"
+          className={`group relative flex flex-col items-center justify-center w-full max-w-md h-32 cursor-pointer rounded-lg border-2 border-dashed transition-all p-4 text-center
+        ${
+          fileSelected
+            ? "border-blue-500 bg-blue-500/5"
+            : "border-gray-600 bg-gray-700/20 hover:border-blue-400 hover:bg-gray-700/40"
+        } active:scale-[0.99]`}
         >
-          <div className="h-8 w-8 relative ">
+          <div className="flex flex-col items-center justify-center gap-2">
             {fileSelected ? (
-              <h1 className="text-black font-semibold text-center">PDF</h1>
+              <>
+                {/* Styled "PDF" or file status indicator */}
+                <div className="bg-blue-500 text-white text-xs font-bold px-2.5 py-1 rounded shadow-sm animate-pulse">
+                  PDF
+                </div>
+                <p className="text-xs text-gray-300 font-medium tracking-wide">
+                  Ready to upload
+                </p>
+              </>
             ) : (
-              <IoMdAdd className="h-8 w-8 text-black hover:text-blue-500" />
+              <>
+                <IoMdAdd className="h-6 w-6 text-gray-400 group-hover:text-blue-400 transition-colors" />
+                <p className="text-xs text-gray-400">
+                  <span className="text-blue-400 font-medium hover:underline">
+                    Click to upload
+                  </span>{" "}
+                  or drag and drop
+                </p>
+              </>
             )}
           </div>
+
           <input
             type="file"
             id="fileInput"
@@ -72,7 +94,12 @@ function UploadFile() {
       </div>
 
       <button
-        className="text-sm text-slate-500 hover:text-blue-500 cursor-pointer border rounded-lg px-2 py-1 "
+        className={`w-full max-w-md text-sm font-medium rounded-lg py-2.5 transition-all shadow-md tracking-wide
+      ${
+        fileSelected
+          ? "bg-blue-600 text-white hover:bg-blue-500 active:scale-[0.98] cursor-pointer"
+          : "bg-gray-700 text-gray-400 border border-gray-600/40 cursor-not-allowed opacity-60"
+      }`}
         type="submit"
       >
         Upload File
