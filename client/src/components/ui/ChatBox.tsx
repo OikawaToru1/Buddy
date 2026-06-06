@@ -1,15 +1,15 @@
 import axios from 'axios';
-import { use, useEffect, useState } from 'react';
+import {  useEffect, useState } from 'react';
 
 
-function ChatBox() {
+function ChatBox(selectedFile : {fileName: string, path: string} | null) {
     const [query, setQuery] = useState("");
     const [convo, setConvo] = useState<{from : string, data : string}[]>([]);
     const [queries, setQueries] = useState<{query: string, response: string}[]>([]);
   const handleSubmit  = () => {
     console.log( "Chat message", query);
     setConvo(prev => [...prev, {from: "You", data: query}]);
-    axios.post("http://localhost:3000/api/files/query", {query})
+    axios.post("http://localhost:3000/api/files/query", {query}, { withCredentials: true })
       .then((res) => {
        
           console.log("Response from server: ", res.data.response);
@@ -22,10 +22,14 @@ function ChatBox() {
     setQuery("");
   }
 
+   useEffect(() => {
+    
+   }, []);
+
   return (
     <div className="w-full md:w-2/3 h-full mr-4 bg-gray-800/50 rounded-xl border border-gray-600/50 flex flex-col justify-between ">
       <div className="border-b border-gray-700 h-[50px]">
-        <h1 className="text-lg font-semibold p-2  text-white">Chat Box</h1>
+        <h1 className="text-lg font-semibold px-4 py-2  text-white">Chat Box : {selectedFile?.fileName || "No file selected"}</h1>
       </div>
       <div className="h-6/7 scroll-auto scrollbar-hide p-2 flex flex-col gap-2 overflow-y-auto">
         { 
