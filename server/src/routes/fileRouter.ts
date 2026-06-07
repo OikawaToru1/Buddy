@@ -4,6 +4,7 @@ import {upload} from '../middlewares/multer.js'
 import { verifyJWT } from "../middlewares/auth.js";
 import { User } from "../models/users.model.js";
 import {File} from "../models/files.models.js";
+import { generateSummary, explainLikeIm5, createQuiz } from "../controllers/queryController.js";
 
 const fileRouter = Router();
 
@@ -22,26 +23,14 @@ fileRouter.post("/",verifyJWT,upload.single('file'),uploadFile);
 
 fileRouter.post("/query", verifyJWT, handleQuery);
 
-fileRouter.post("/generate-summary", verifyJWT, async(req, res) => {
-  const {fileName} = req.body;
-  console.log("Generating summary for file: ", fileName);
-  // Implement the logic to generate summary for the given file
-  res.json({message: `Summary generated for file ${fileName}`});
-});
+fileRouter.post("/generate-summary", verifyJWT, generateSummary);
 
-fileRouter.post("/explain-like-im-5", verifyJWT, async(req, res) => {
-  const {fileName} = req.body;
-  console.log("Generating explanation for file: ", fileName);
-  // Implement the logic to generate explanation for the given file
-  res.json({message: `Explanation generated for file ${fileName}`});
-});
 
-fileRouter.post("/create-quiz", verifyJWT, async(req, res) => {
-  const {fileName} = req.body;
-  console.log("Creating quiz for file: ", fileName);
-  // Implement the logic to create quiz for the given file
-  res.json({message: `Quiz created for file ${fileName}`});
-});
+fileRouter.post("/explain-like-im-5", verifyJWT, explainLikeIm5);
+
+fileRouter.post("/create-quiz", verifyJWT, createQuiz);
+
+  
 
 
 
