@@ -16,10 +16,12 @@ export const classifyIntent = (query : string) : IntentType =>{
 
 
 export const isDocumentLevelQuery = (query : string) : boolean => {
-    const lowerCaseQuery = query.toLowerCase().trim();
+    const lowerCaseQuery = query.toLowerCase();
 
     const documentLevelKeywords = [
       "summarize",
+      "summarise",
+      "summarization",
       "summary",
       "explain like i'm 5",
       "quiz me",
@@ -30,27 +32,13 @@ export const isDocumentLevelQuery = (query : string) : boolean => {
       "document overview",
       "document summary",
       "tl;dr",
-      "gist of this document",
-      "briefly explain this document",
-      "What is this document about?",
-
-      "What are the key takeaways?",
-
-      "What is the summary?",
-      "Can you summarize this document?",
-
-      "Explain this document like I'm 5.",
-      "Can you explain this document like I'm 5?",
-
-      "Quiz me on this document.",
-      "Can you generate questions based on this document?"
     ];
 
     return documentLevelKeywords.some(keyword => lowerCaseQuery.includes(keyword));
 }
 
 export const isIntentToQuery = (query : string) : boolean => {
-    const lowerCaseQuery = query.toLowerCase().trim();
+    const lowerCaseQuery = query.toLowerCase();
 
 
     const queryIntents = ["what", "how", "why", "when", "where", "who", "which", "whom"];
