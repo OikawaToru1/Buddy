@@ -14,6 +14,7 @@ import Groq from "groq-sdk";
 import { response } from "express";
 import { File } from "../models/files.models.js";
 import { User } from "../models/users.model.js";
+import {parsePDF} from './fileController.js'
 
 const groq = new Groq({apiKey : process.env.GROQ_API_KEY || ""});
 const pc = new Pinecone({
@@ -21,6 +22,10 @@ const pc = new Pinecone({
 });
 
 const ai = new GoogleGenAI({});
+const denseSplitter = new RecursiveCharacterTextSplitter({
+  chunkSize: 1000,
+  chunkOverlap: 200,
+});
 
 
 async function handleQuery(req: any, res: any) {
@@ -111,7 +116,54 @@ async function explainLikeIm5(req: any, res: any){
 }
 
 async function createQuiz(req: any, res: any){
-  const {fileName} = req.body;
-  // Logic to create quiz for the file with name fileName
-  res.json({message : "Quiz created successfully for file " + fileName});   
+  const {fileName, fileId, path} = req.body;
+  console.log("Creating quiz for file ", fileName, " with id ", fileId, " and path ", path);
+
+const parsedContent = await parsePDF(path);
+if(!parsedContent) return res.status(500).json({message : "Error in parsing the PDF file for quiz creation"});
+
+const chunks = await denseSplitter.splitText(parsedContent);
+
+try{
+  const quizResponse = await groq.chat.completions.create({
+    messages: [
+      {
+        role: "system",
+        content: `You are a helpful assistant called Buddy for creating quizzes based on the content of the documents uploaded by the user.
+        Generate 5 quiz questions based on the content below.
+        
+        Respond ONLY with a valid JSON array. No markdown, no explanation, no extra text.
+        Each item must have exactly these fields:
+        - question: string
+        - answer: string  
+        - options: string[] (4 items, one must match answer exactly)
+        
+        ---
+        Context from the file is below:
+        ${chunks.map((chunk) => chunk).join("\n\n")}
+        ----
+        `,
+      },
+    ],
+    model: "openai/gpt-oss-20b",
+  });
+
+  console.log(
+    "Response from groq for quiz creation is ",
+    quizResponse.choices[0]?.message.content || "",
+  );
+  res.json({message : "Quiz created successfully for file " + fileName, quiz: quizResponse.choices[0]?.message.content || ""});
 }
+catch(error)
+{
+  console.log("Error in creating quiz using groq", error);
+  return res.status(500).json({message : "Error in creating quiz for the file " + fileName});
+}
+
+
+
+  
+   
+}
+
+export {  generateSummary, explainLikeIm5, createQuiz };
