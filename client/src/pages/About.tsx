@@ -30,8 +30,8 @@ export default function About() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
           {/* Left Column: Fixed Core Message (Spans 5 Columns) */}
           <div className="lg:col-span-5 flex flex-col gap-5 lg:sticky lg:top-24">
-            <div className="inline-flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-full px-3 py-1 self-start shadow-sm">
-              <span className="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+            <div className="inline-flex items-center gap-2  px-3 py-1 self-start shadow-sm">
+              
               <span className="text-[11px] font-semibold tracking-wider uppercase text-gray-400">
                 The Mission
               </span>
