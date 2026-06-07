@@ -7,12 +7,10 @@ function ChatBox(selectedFile : {fileName: string, path: string, fileId: string}
     const [convo, setConvo] = useState<{from : string, data : string}[]>([]);
     const [queries, setQueries] = useState<{query: string, response: string}[]>([]);
   const handleSubmit  = () => {
-    console.log( "Chat message", query);
     setConvo(prev => [...prev, {from: "You", data: query}]);
-    axios.post("http://localhost:3000/api/files/query", {query, fileId: selectedFile?.fileId || "" , fileName : selectedFile?.fileName || "", path : selectedFile?.path || ""}, { withCredentials: true })
+    axios.post("http://localhost:3000/api/files/query", {query, fileId: selectedFile?.fileId || "" , fileName : selectedFile?.fileName || "", path : selectedFile?.path || "", conversationContext: convo}, { withCredentials: true })
       .then((res) => {
        
-          console.log("Response from server: ", res.data.response);
           setConvo(prev => [...prev, {from: "Buddy", data: res.data.response}]);
 
       })
