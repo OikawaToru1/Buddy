@@ -7,12 +7,14 @@ import SummaryDisplay from "./SummaryDisplay";
 
 function FileOptions(selectedFile : {fileName: string, path: string, fileId: string} | null) {
   const [activeOption, setActiveOption] = useState<string | null>(null);
+  const [quizData, setQuizData] = useState<{question: string, answer: string, options: string[]}[] | null>(null);
 
   const createQuiz = () => {
     setActiveOption("createQuiz");
-    axios.post("http://localhost:3000/api/files/create-quiz", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || ""}, { withCredentials: true })
+    axios.post("http://localhost:3000/api/files/create-quiz", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || "", path: selectedFile?.path || ""}, { withCredentials: true })
       .then((res) => {
-        console.log("Quiz created successfully: ", res.data);
+        console.log("Quiz created successfully: ", res.data.quiz);
+        setQuizData(res.data.quiz);
       })
       .catch((err) => {
         console.log(err, "Error creating quiz");
@@ -21,7 +23,7 @@ function FileOptions(selectedFile : {fileName: string, path: string, fileId: str
   }
   const generateSummary = () => {
     setActiveOption("generateSummary");
-    axios.post("http://localhost:3000/api/files/generate-summary", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || ""}, { withCredentials: true })
+    axios.post("http://localhost:3000/api/files/generate-summary", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || "", path: selectedFile?.path || ""}, { withCredentials: true })
       .then((res) => {
         console.log("Summary generated successfully: ", res.data);
       })
@@ -31,7 +33,7 @@ function FileOptions(selectedFile : {fileName: string, path: string, fileId: str
   }
   const explainLikeIm5 = () => {
     setActiveOption("explainLikeIm5");
-    axios.post("http://localhost:3000/api/files/explain-like-im-5", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || ""}, { withCredentials: true })
+    axios.post("http://localhost:3000/api/files/explain-like-im-5", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || "", path: selectedFile?.path || ""}, { withCredentials: true })
       .then((res) => {
         console.log("Explanation generated successfully: ", res.data);
       })
@@ -95,7 +97,7 @@ function FileOptions(selectedFile : {fileName: string, path: string, fileId: str
       <div className="flex-1 p-4 overflow-y-auto custom-scrollbar text-sm text-gray-300">
         {activeOption === "createQuiz" && (
           <div className="h-full w-full animate-fadeIn">
-            <QuizBox />
+            <QuizBox quizData={quizData} />
           </div>
         )}
         {activeOption === "generateSummary" && (
