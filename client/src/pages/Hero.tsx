@@ -46,7 +46,6 @@ function Hero() {
     axios
       .get("http://localhost:3000/api/files", { withCredentials: true })
       .then((res) => {
-        console.log("Files fetched successfully:", res.data.fileHistory);
         res.data.fileHistory?.map((file: any) => {
           setFiles((prevFiles) => [
             ...prevFiles,
@@ -60,25 +59,36 @@ function Hero() {
 
   return (
     <div className="flex flex-col gap-4 items-center md:flex-row   w-full h-[90vh]  text-white">
-        <div className="w-full md:w-1/3 h-full bg-gray-800/50 rounded-xl border border-gray-600/50 flex flex-col items-center gap-4">
-            <UploadFile />
-            <Files files={files} setSelectedFile={setSelectedFile} />
-        </div>
+      <div className="w-full md:w-1/3 h-full bg-gray-800/50 rounded-xl border border-gray-600/50 flex flex-col items-center gap-4">
+        <UploadFile
+          onFileUpload={(newFile) =>
+            setFiles((prevFiles) => [newFile, ...prevFiles])
+          }
+        />
+        <Files files={files} setSelectedFile={setSelectedFile} />
+      </div>
 
-      <ChatBox fileName={selectedFile?.fileName || ""} path={selectedFile?.path || ""} fileId={selectedFile?.fileId || ""} />
+      <ChatBox
+        fileName={selectedFile?.fileName || ""}
+        path={selectedFile?.path || ""}
+        fileId={selectedFile?.fileId || ""}
+      />
 
-    <FileOptions fileName={selectedFile?.fileName || ""} path={selectedFile?.path || ""} fileId={selectedFile?.fileId || ""} />
-        
+      <FileOptions
+        fileName={selectedFile?.fileName || ""}
+        path={selectedFile?.path || ""}
+        fileId={selectedFile?.fileId || ""}
+      />
     </div>
 
     // Alternative UI with tab navigation
-  //   <div>
-  //     <TabNavigation setSelectedTab={setSelectedTab}/>
-  //     <div>
-  //       {TABS[selectedTab]}
-  //     </div>
-  //   </div>
-  )
+    //   <div>
+    //     <TabNavigation setSelectedTab={setSelectedTab}/>
+    //     <div>
+    //       {TABS[selectedTab]}
+    //     </div>
+    //   </div>
+  );
 }
 
 export default Hero
