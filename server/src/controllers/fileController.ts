@@ -73,6 +73,26 @@ async function getFileByName(req : any, res : any){
     res.json({message: `File with name ${fileName} retrieved successfully`});
 }
 
+// async function main(){
+//   console.log("Running main function to test deleting all files and clearing user file history for testing purposes");
+//   const deleteFiles = await File.deleteMany({});
+//   const updateUser = await User.updateMany({}, {fileHistory : []});
+//   console.log("Deleted files ", deleteFiles);
+//   console.log("Updated user file history ", updateUser);
+// }
+// main();
+
+// async function main(){
+//   console.log("Running main to check files in database");
+//   const files = await File.find({});
+//   console.log("Files in database:", files);
+
+//   console.log("User with files populated:");
+//   const users = await User.find({}).populate("fileHistory").select("-password -refreshToken");
+//   console.log(users);
+// }
+// main();
+
 async function parsePDF(filePath : string){
     try {
         const parser = new PDFParse({url : filePath});
@@ -131,11 +151,11 @@ async function uploadFile(req : any, res : any){
 
          console.log("Response of individual chunking embeeding is. as below ", response.embeddings)
 
-
-         const upsertResponse = await upsertToPinecone(response.embeddings || [], chunks, `${fileName}_${Date.now()}`, user._id);
+         const documentId = `${fileName}_${Date.now()}`;
+         const upsertResponse = await upsertToPinecone(response.embeddings || [], chunks, documentId, user._id);
 
          const fileRecord = await File.create({
-            fileId : `${fileName}_${Date.now()}`,
+            fileId : documentId,
             fileName,
             path : uploadResponse.secure_url,
             owner : user._id, 
@@ -147,28 +167,9 @@ async function uploadFile(req : any, res : any){
 
         const userWithFiles = await User.findById(user._id).populate("fileHistory").select("-password -refreshToken");
         console.log("File record created in the database and populated in user ", fileRecord, userWithFiles);
-
-        res.json({message: "done", data: userWithFiles});
+        console.log("File record", fileRecord);
+        res.json({message: "done", data: fileRecord});
           
-
-        
-        
-         
-
-        // const file = await client.files.create({
-        //     file : fileResponse.body as any,
-        //     purpose : "parse",
-        // });
-
-        // const parseResult = await client.parsing.parse({
-        //     file_id : file.id,
-        //     tier : "cost_effective",
-        //     version : "latest",
-        //     expand : ["markdown"],
-
-        // });
-        // console.log("Parsed markdown content of the first page", parseResult.markdown?.pages[0] );
-
         // res.json({success: true, message: "File uploaded successfully", url: uploadResponse?.secure_url});
         
     } catch (error) {
@@ -211,7 +212,7 @@ async function upsertToPinecone(embeddings : any[], chunks : string[], documentI
 
 async function handleQuery(req : any, res : any){
   const {query : userQuery} = req.body;
-  const {fileName, fileId, path} = req.body;
+  const {fileName, fileId, path, conversationContext} = req.body;
   const queryWithContext = userQuery.concat(`\n\n---\n\n Use the ${fileName} \n  FileId ${fileId} `);
   console.log("Received user query: ", queryWithContext);
 
@@ -219,8 +220,9 @@ async function handleQuery(req : any, res : any){
   console.log("Classified intent: ", intent);
 
   if(intent === "Document_Summary") {
-    const summaryQuery = `Summarize the content of the document ${fileName} with fileId ${fileId} in a concise manner.`
+    const summaryQuery = `Summarize the content of the document ${fileName} in a concise manner.`
     const parsedContent = await parsePDF(path);
+    console.log("Parsed content of the PDF file for summary creation is ", parsedContent);
     if (!parsedContent) {
       res
         .status(500)
@@ -238,13 +240,20 @@ async function handleQuery(req : any, res : any){
         messages: [
           {
             role: "system",
-            content: ` You are a helpful assistant called Buddy , you have to summarize the content of the document uploaded by the user based on the user query. Use only the information from the retrieved relevant chunks to answer the question. If you don't know the answer, say you don't know and don't try to make up an answer.
-           Despite any format the query or context is provided in, make sure you deliver it in a good format with proper punctuation and structure. Always try to use all the relevant information from the retrieved chunks to answer the question in a concise manner.
+            content: ` You are a helpful assistant called Buddy for summarizing the content uploaded below in form of chunks.Use the given information only to create a concise summary of the chunks provided.
+            Make sure you deliver the summary in a good format and proper punctuation so that It can be easily displayed and read by the user.
            
-           ---
+            ----
+            Context of the old conversation between user and buddy is as follows, it can be helpful in creating a better summary by understanding the user's preferences and style of conversation, but it's not necessary to use it for creating the summary. Use it only if you find it helpful and relevant while creating the summary.
+            ${conversationContext && conversationContext.length > 0 ? conversationContext.map((item : any) => `${item.from} said : ${item.data}`).join("\n\n") : "No previous conversation context available"}
+            ----
+
+
+          ----
            Context for creating summary is in form of Chunks below :
            ${chunks.map((match) => match).join("\n\n")}
            ----
+
            `,
           },
           {
@@ -279,9 +288,9 @@ async function handleQuery(req : any, res : any){
       config: { outputDimensionality: 1024 },
     });
 
-    const namespace = pc
-      .index("buddy-index")
-      .namespace(`buddy-namespace-${req.user._id}`);
+    const namespace = pc.index("buddy-index")
+    .namespace(`buddy-namespace-${req.user._id}`);
+    // .namespace("buddy-namespace");
 
     if (!queryEmbedding.embeddings || queryEmbedding.embeddings.length === 0) {
       res
@@ -295,9 +304,9 @@ async function handleQuery(req : any, res : any){
     const result = await namespace.query({
       vector: queryEmbedding.embeddings[0]?.values || [],
       topK: 3,
-      filter: {
-        document_id: fileId,
-      },
+      // filter: {
+      //   document_id: fileId,
+      // },
       includeMetadata: true,
     });
 
@@ -308,8 +317,12 @@ async function handleQuery(req : any, res : any){
             role: "system",
             content: ` You are a helpful assistant called Buddy for answering questions related to the documents uploaded by the user. Use only the information from the retrieved relevant chunks to answer the question. If you don't know the answer, say you don't know and don't try to make up an answer. If the query is normal conversation without any relation to the uploaded documents, answer in a helpful and concise manner.
            Despite any format the query or context is provided in, make sure you deliver it in a good format with proper punctuation and structure. Always try to use all the relevant information from the retrieved chunks to answer the question in a concise manner. If the query is conversational and not related to the documents, answer it in a helpful and concise manner.
-           
+
            ---
+            Context of the old conversation between user and buddy is as follows, it can be helpful in answering the user's query by understanding the user's preferences and style of conversation, but it's not necessary to use it for answering the query. Use it only if you find it helpful and relevant while answering the query.
+            ${conversationContext && conversationContext.length > 0 ? conversationContext.map((item : any) => `${item.from} said : ${item.data}`).join("\n\n") : "No previous conversation context available"}
+           ---
+
            Context from the relevant chunks retrieved from the vector database is below:
            ${result.matches.map((match) => match.metadata?.chunk_text).join("\n\n")}
            ----
@@ -384,4 +397,4 @@ async function handleQuery(req : any, res : any){
 
 
 
-export {getFileByName, uploadFile, handleQuery}
+export {getFileByName, uploadFile, handleQuery, parsePDF}
