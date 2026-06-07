@@ -4,6 +4,8 @@ import { useSelector,useDispatch } from "react-redux";
 import type { RootState } from "../rtk/store.js";
 import { loginSuccess, logout } from "../rtk/slice/authSlice";
 import { useNavigate } from "react-router";
+import Loader from "../components/ui/Loader";
+import PopOut from "../components/ui/PopOut";
 
 
 interface LoginProps  {
@@ -19,9 +21,17 @@ function Login() {
   const authState = useSelector((state: RootState)=> state.auth.isAuthenticated);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showPopOut, setShowPopOut] = useState<boolean>(false);
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoading(true);
+    if(formData.email.trim() === '' || formData.password.trim() === '') {
+      setShowPopOut(true);
+      setLoading(false);
+      return;
+    }
     console.log("Form Data is ", formData);
     axios.post("/api/users/login", formData, {withCredentials : true})
       .then((response) => {
@@ -32,12 +42,17 @@ function Login() {
           ))
         }
         navigate("/home");
+        setLoading(false);
         // Handle successful login, e.g., redirect to dashboard
       })
       .catch((error) => {
         console.error("Login failed:", error.response?.data || error.message);
         // Handle login failure, e.g., show error message to user
+      })
+      .finally(() => {
+        setLoading(false);
       });
+      
   };
 
   const handleLogOut = () => {
@@ -62,13 +77,22 @@ function Login() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
+      {showPopOut && (
+        <PopOut
+          title="Missing Information"
+          content="Please fill in all fields."
+          onClose={() => setShowPopOut(false)}
+        />
+      )}
+      {loading && <Loader />}
       <h1 className="text-4xl font-bold mb-8">Login</h1>
       <form className="w-full max-w-sm bg-gray-800/50 rounded-lg p-6" onSubmit={handleLogin}>
         <div className="mb-4">
-          <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="email">
+          <label className="block text-gray-300 text-sm font-bold mb-2" htmlFor="email" >
             email
           </label>
           <input
+            disabled={loading}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline"
             id="email"
             type="text"
@@ -82,6 +106,7 @@ function Login() {
             Password
           </label>
           <input
+            disabled={loading}
             className="shadow appearance-none border rounded w-full py-2 px-3 text-white mb-3 leading-tight focus:outline-none focus:shadow-outline"
             id="password"
             type="password"

@@ -1,5 +1,8 @@
 import { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router";
+import Loader from "../components/ui/Loader";
+import PopOut from "../components/ui/PopOut";
 
 interface SignUpProps {
     fullName : string;
@@ -17,8 +20,17 @@ function Signup() {
         password: '',
         avatar: undefined,
     });
+    const navigate = useNavigate();
+    const [loading, setLoading] = useState<boolean>(false);
+    const [showPopOut, setShowPopOut] = useState<boolean>(false);
     const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        if(formData.email.trim() === '' || formData.password.trim() === '' || formData.username.trim() === '' || formData.fullName.trim() === '' || !formData.avatar) {
+          setShowPopOut(true);
+          return;
+        }
+        setLoading(true);
         if(formData.username && formData.email && formData.password) {
             setFormData({
               fullName : '',
@@ -30,11 +42,16 @@ function Signup() {
             axios.post("/api/auth/users/register", formData, {withCredentials : true})
               .then((response) => {
                 console.log("Sign up successful:", response.data);
+                navigate("/login");
+                setLoading(false);
                 // Handle successful sign up, e.g., redirect to login page
               })
               .catch((error) => {
                 console.error("Sign up failed:", error.response?.data || error.message);
                 // Handle sign up failure, e.g., show error message to user
+              })
+              .finally(() => {
+                setLoading(false);
               });
 
         } else {
@@ -45,6 +62,14 @@ function Signup() {
     }
     return (
       <div className="flex flex-col items-center justify-center min-h-screen bg-gray-900 text-white">
+        {showPopOut && (
+          <PopOut
+            title="Missing Information"
+            content="Please fill in all fields."
+            onClose={() => setShowPopOut(false)}
+          />
+        )}
+        {loading && <Loader />}
         <h1 className="text-4xl font-bold mb-8">Sign Up</h1>
         <form
           className="w-full max-w-sm bg-gray-800/50 rounded-lg p-6"
