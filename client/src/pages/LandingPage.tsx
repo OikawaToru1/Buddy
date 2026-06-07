@@ -36,8 +36,8 @@ function LandingPage() {
         <div className="absolute top-1/3 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[500px] h-[250px] bg-blue-600/5 blur-[120px] rounded-full pointer-events-none" />
 
         {/* Tiny Status Badge */}
-        <div className="inline-flex items-center gap-2 bg-gray-900 border border-gray-800 rounded-full px-3 py-1 mb-6 animate-fade-in shadow-sm">
-          <span className="h-1.5 w-1.5 rounded-full bg-blue-500"></span>
+        <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 animate-fade-in shadow-sm">
+          
           <span className="text-[11px] font-medium tracking-wider uppercase text-gray-400">
             Your personal document workspace
           </span>
@@ -60,7 +60,7 @@ function LandingPage() {
           </p>
           {/* Your funny sub-tag, styled cleanly so it looks witty, not sloppy */}
           <span className="inline-block font-mono text-[11px] bg-gray-900/60 border border-gray-800 text-gray-500 px-2.5 py-1 rounded-md">
-            (A cheaper copy of NotebookLM )
+            (A Wanna be NotebookLM But Lacking)
           </span>
         </div>
 
