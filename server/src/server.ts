@@ -12,7 +12,7 @@ dotenv.config({
 })
 
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 
 
@@ -33,13 +33,6 @@ app.use('/api/users', authRouter);
 
 
 conntectMongoDB();
-
-// app.post('/api/files',upload.single('file'), (req, res) => {
-//   console.log('Received file upload request');
-//   console.log(req.file);
-  
-//   res.json({ message: 'File uploaded successfully', file: req.file });
-// });
 
 
 app.listen(port, () => {
