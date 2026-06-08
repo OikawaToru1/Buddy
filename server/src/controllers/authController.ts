@@ -68,11 +68,11 @@ const generateAccessAndRefreshTokens = async (userId : string)=>{
 
 async function loginUser(req : any, res : any){
 
-    const {email, username, password} = req.body;
-
-    if(! (username || email))
+    const {email,  password} = req.body;
+    console.log("Received login request with data:", req.body);
+    if(! ( email))
     {
-        return res.status(400).json({message : "Username and email are required"});
+        return res.status(400).json({message : " and email are required"});
     }
 
     if(!password){
@@ -83,7 +83,7 @@ async function loginUser(req : any, res : any){
         const userExists = await User.findOne({
             $or : [
                 {email},
-                {username}
+                
             ]
         });
         if(!userExists){
@@ -92,7 +92,7 @@ async function loginUser(req : any, res : any){
 
        const isPasswordCorrect = await userExists.isPasswordCorrect(password);
         if(!isPasswordCorrect){
-            return res.status(401).json({message : "Invalid credentials"});
+            return res.status(401).json({message : "Invalid password"});
         }
 
         const {accessToken , refreshToken} = await generateAccessAndRefreshTokens(userExists._id); 
