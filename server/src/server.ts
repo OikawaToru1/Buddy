@@ -35,6 +35,6 @@ app.use('/api/users', authRouter);
 conntectMongoDB();
 
 
-app.listen(port, () => {
+app.listen(Number(port),"0.0.0.0", () => {
   console.log(`Example app listening on port ${port}`)
 })
