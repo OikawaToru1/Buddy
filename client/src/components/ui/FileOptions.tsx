@@ -9,7 +9,7 @@ import Popup from "../ui/PopOut";
 
 function FileOptions(selectedFile : {fileName: string, path: string, fileId: string} | null) {
   const [activeOption, setActiveOption] = useState<string | null>(null);
-  const [quizData, setQuizData] = useState<{question: string, answer: string, options: string[]}[] | null>(null);
+  const [quizData, setQuizData] = useState<string| null>(null);
   const [summaryData, setSummaryData] = useState<string | null>(null);
   const [explanationData, setExplanationData] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
