@@ -97,22 +97,90 @@ async function handleQuery(req: any, res: any) {
 
 
 async function generateSummary(req: any, res: any){
-    const {fileName} = req.body;
-   
-    const queryEmbedding = await ai.models.embedContent({
-      model: "gemini-embedding-2",
-      contents: `Generate a concise summary for the content of the file named ${fileName}`,
-      config: { outputDimensionality: 1024 },
-    });
-    
+  const {fileName, fileId, path} = req.body;
+   console.log("Generating summary for file ", fileName);
 
-    res.json({message : "Summary generated successfully for file " + fileName});
+   const parsedContent = await parsePDF(path);
+   if(!parsedContent) return res.status(500).json({message : "Error in parsing the PDF file for summary generation"});
+   const chunks = await denseSplitter.splitText(parsedContent);
+
+    try{
+        const summaryResponse = await groq.chat.completions.create({
+          messages: [
+            {
+              role: "system",
+              content: `You are a helpful assistant called Buddy for creating summaries based on the content of the documents uploaded by the user.
+              Generate a concise summary based on the content below.
+
+              Focus Highly on the format of the response. The response should be a concise summary in text format, no mistakes, no bullet points, no markdown, no explanation, no extra text.
+              
+              ---
+              Context from the file is below:
+
+              ${chunks.map((chunk) => chunk).join("\n\n") }
+              ---
+              `,
+            },
+          ],
+          model: "openai/gpt-oss-20b",
+        });
+    
+        
+        res.json({message : "Summary generated successfully for file " + fileName, summary: summaryResponse.choices[0]?.message.content || ""});
+      }
+      catch(error)
+      {
+        console.log("Error in generating summary using groq", error);
+        return res.status(500).json({message : "Error in generating summary for the file " + fileName});
+      }
 }
 
 async function explainLikeIm5(req: any, res: any){
-  const {fileName} = req.body;
-  // Logic to generate explanation like I'm 5 for the file with name fileName
-  res.json({message : "Explanation generated successfully for file " + fileName});
+ const { fileName, fileId, path } = req.body;
+ console.log("Generating summary for file ", fileName);
+
+ const parsedContent = await parsePDF(path);
+ if (!parsedContent)
+   return res
+     .status(500)
+     .json({ message: "Error in parsing the PDF file for summary generation" });
+ const chunks = await denseSplitter.splitText(parsedContent);
+
+ try {
+   const summaryResponse = await groq.chat.completions.create({
+     messages: [
+       {
+         role: "system",
+         content: `You are a helpful assistant called Buddy for creating summaries based on the content of the documents uploaded by the user.
+              Generate a concise summary based on the content below.
+              Expalain the content in simple terms as if you are explaining it to a 5 year old.
+              Make sure to keep the explanation very simple and concise, avoid using complex words or jargons. Use simple sentence structures and explain things in a very easy to understand manner.
+
+              Focus Highly on the format of the response. The response should be a concise summary in text format, no mistakes, no bullet points, no markdown, no explanation, no extra text.
+              
+              ---
+              Context from the file is below:
+
+              ${chunks.map((chunk) => chunk).join("\n\n")}
+              ---
+              `,
+       },
+     ],
+     model: "openai/gpt-oss-20b",
+   });
+
+   
+   res.json({
+     message: "Summary generated successfully for file " + fileName,
+     summary: summaryResponse.choices[0]?.message.content || "",
+   });
+ } catch (error) {
+   console.log("Error in generating summary using groq", error);
+   return res
+     .status(500)
+     .json({ message: "Error in generating summary for the file " + fileName });
+ }
+
 }
 
 async function createQuiz(req: any, res: any){
@@ -131,6 +199,8 @@ try{
         role: "system",
         content: `You are a helpful assistant called Buddy for creating quizzes based on the content of the documents uploaded by the user.
         Generate 5 quiz questions based on the content below.
+
+        Focus Highly on the format of the response. The response should be an JSON ARRAY , no mistakes 
         
         Respond ONLY with a valid JSON array. No markdown, no explanation, no extra text.
         Each item must have exactly these fields:
@@ -140,7 +210,9 @@ try{
         
         ---
         Context from the file is below:
+
         ${chunks.map((chunk) => chunk).join("\n\n")}
+
         ----
         `,
       },
@@ -148,10 +220,7 @@ try{
     model: "openai/gpt-oss-20b",
   });
 
-  console.log(
-    "Response from groq for quiz creation is ",
-    quizResponse.choices[0]?.message.content || "",
-  );
+  
   res.json({message : "Quiz created successfully for file " + fileName, quiz: quizResponse.choices[0]?.message.content || ""});
 }
 catch(error)
