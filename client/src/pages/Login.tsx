@@ -32,10 +32,10 @@ function Login() {
       setLoading(false);
       return;
     }
-    console.log("Form Data is ", formData);
+    
     axios.post("/api/users/login", formData, {withCredentials : true})
       .then((response) => {
-        console.log("Login successful:", response.data);
+        // console.log("Login successful:", response.data);
         if(response.data && response.data.user){
           dispatch(loginSuccess(
             response.data.user
@@ -58,7 +58,7 @@ function Login() {
   const handleLogOut = () => {
     axios.post("/api/auth/logout", {}, {withCredentials : true})
       .then((response) => {
-        console.log("Logout successful:", response.data.message);
+        // console.log("Logout successful:", response.data.message);
         dispatch(logout());
         // Handle successful logout, e.g., redirect to login page
       })
