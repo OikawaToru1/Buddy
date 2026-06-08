@@ -2,18 +2,31 @@ import { useState } from "react";
 import axios from "axios";
 import QuizBox from "./QuizBox";
 import SummaryDisplay from "./SummaryDisplay";
+import Loading from "./Loader";
+import Popup from "../ui/PopOut";
 
 
 
 function FileOptions(selectedFile : {fileName: string, path: string, fileId: string} | null) {
   const [activeOption, setActiveOption] = useState<string | null>(null);
   const [quizData, setQuizData] = useState<{question: string, answer: string, options: string[]}[] | null>(null);
+  const [summaryData, setSummaryData] = useState<string | null>(null);
+  const [explanationData, setExplanationData] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [showPopup, setShowPopup] = useState<boolean >(false);
 
+  const isFileSelected = (!selectedFile?.fileId && !selectedFile?.fileName && !selectedFile?.path) === false
+  console.log("Is file selected???", isFileSelected)
   const createQuiz = () => {
+    if(!isFileSelected)
+    { setShowPopup(true)
+
+    }
     setActiveOption("createQuiz");
     axios.post("http://localhost:3000/api/files/create-quiz", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || "", path: selectedFile?.path || ""}, { withCredentials: true })
       .then((res) => {
-        console.log("Quiz created successfully: ", res.data.quiz);
+    
+        console.log("Quiz created successfully: ", typeof(res.data.quiz), res.data.quiz);
         setQuizData(res.data.quiz);
       })
       .catch((err) => {
@@ -22,28 +35,48 @@ function FileOptions(selectedFile : {fileName: string, path: string, fileId: str
 
   }
   const generateSummary = () => {
+    if(!isFileSelected) setShowPopup(true)
+    setLoading(true);
     setActiveOption("generateSummary");
     axios.post("http://localhost:3000/api/files/generate-summary", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || "", path: selectedFile?.path || ""}, { withCredentials: true })
       .then((res) => {
+        setLoading(false);
         console.log("Summary generated successfully: ", res.data);
+        setSummaryData(res.data.summary);
       })
       .catch((err) => {
         console.log(err, "Error generating summary");
+        setLoading(false);
       });
   }
   const explainLikeIm5 = () => {
+    if(!isFileSelected){
+       setShowPopup(true);
+    }
+    
+    setLoading(true);
     setActiveOption("explainLikeIm5");
     axios.post("http://localhost:3000/api/files/explain-like-im-5", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || "", path: selectedFile?.path || ""}, { withCredentials: true })
       .then((res) => {
+        setLoading(false);
         console.log("Explanation generated successfully: ", res.data);
+        setExplanationData(res.data.summary);
       })
       .catch((err) => {
         console.log(err, "Error generating explanation");
+        setLoading(false);
       });
   }
   return (
     <div className="w-full h-full md:w-1/3 mr-4 bg-gray-800/50 rounded-xl border border-gray-600/50 flex flex-col overflow-hidden shadow-xl backdrop-blur-sm">
       {/* Header */}
+      {showPopup && (
+        <Popup 
+          title="No file selected"
+          content="Please select a file to use this option."
+          onClose={() => setShowPopup(false)}
+        />
+      )}
       <div className="border-b border-gray-700/60 h-[56px] flex items-center justify-center shrink-0">
         <h1 className="text-sm font-semibold text-gray-300 tracking-wide">
           Options you can try
@@ -97,15 +130,24 @@ function FileOptions(selectedFile : {fileName: string, path: string, fileId: str
       <div className="flex-1 p-4 overflow-y-auto custom-scrollbar text-sm text-gray-300">
         {activeOption === "createQuiz" && (
           <div className="h-full w-full animate-fadeIn">
-            <QuizBox quizData={quizData} />
+            <QuizBox quizData={quizData} fileName={selectedFile?.fileName} />
           </div>
         )}
         {activeOption === "generateSummary" && (
           <div className="h-full w-full animate-fadeIn">
-            <SummaryDisplay
-              summary="This is a sample summary."
+            <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+              Summary:
+            </h2>
+            {loading ? (
+              <div className="flex items-center justify-center h-full">
+                <Loading />
+              </div>
+            ) : ( <SummaryDisplay
+              summary={summaryData || "This is a sample summary."}
               type="summary"
-            />
+            /> )}
+
+            
           </div>
         )}
         {activeOption === "explainLikeIm5" && (
@@ -113,13 +155,16 @@ function FileOptions(selectedFile : {fileName: string, path: string, fileId: str
             <h2 className="text-xs font-bold text-gray-400 uppercase tracking-wider">
               Explanation:
             </h2>
-            <p className="text-gray-300 text-xs mb-1">
-              Here is an explanation of your file in simple terms:
-            </p>
-            <SummaryDisplay
-              summary="This is a sample explanation."
-              type="explanation"
-            />
+            {loading ? (
+              <div className="flex items-center justify-center h-full">
+                <Loading />
+              </div>
+            ) : (
+              <SummaryDisplay
+                summary={explanationData || "This is a sample explanation."}
+                type="explanation"
+              />
+            )}
           </div>
         )}
       </div>
