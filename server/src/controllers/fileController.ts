@@ -149,7 +149,7 @@ async function uploadFile(req : any, res : any){
            config: { outputDimensionality: 1024 },
          });
 
-         console.log("Response of individual chunking embeeding is. as below ", response.embeddings)
+         // console.log("Response of individual chunking embeeding is. as below ", response.embeddings)
 
          const documentId = `${fileName}_${Date.now()}`;
          const upsertResponse = await upsertToPinecone(response.embeddings || [], chunks, documentId, user._id);
@@ -166,8 +166,8 @@ async function uploadFile(req : any, res : any){
         });
 
         const userWithFiles = await User.findById(user._id).populate("fileHistory").select("-password -refreshToken");
-        console.log("File record created in the database and populated in user ", fileRecord, userWithFiles);
-        console.log("File record", fileRecord);
+        // console.log("File record created in the database and populated in user ", fileRecord, userWithFiles);
+        // console.log("File record", fileRecord);
         res.json({message: "done", data: fileRecord});
           
         // res.json({success: true, message: "File uploaded successfully", url: uploadResponse?.secure_url});
@@ -214,15 +214,15 @@ async function handleQuery(req : any, res : any){
   const {query : userQuery} = req.body;
   const {fileName, fileId, path, conversationContext} = req.body;
   const queryWithContext = userQuery.concat(`\n\n---\n\n Use the ${fileName} \n  FileId ${fileId} `);
-  console.log("Received user query: ", queryWithContext);
+  // console.log("Received user query: ", queryWithContext);
 
   const intent = classifyIntent(userQuery);
-  console.log("Classified intent: ", intent);
+  // console.log("Classified intent: ", intent);
 
   if(intent === "Document_Summary") {
     const summaryQuery = `Summarize the content of the document ${fileName} in a concise manner.`
     const parsedContent = await parsePDF(path);
-    console.log("Parsed content of the PDF file for summary creation is ", parsedContent);
+    // console.log("Parsed content of the PDF file for summary creation is ", parsedContent);
     if (!parsedContent) {
       res
         .status(500)
@@ -336,10 +336,10 @@ async function handleQuery(req : any, res : any){
         model: "openai/gpt-oss-20b",
       });
 
-      console.log(
-        "Response from groq for the query is ",
-        queryResponse.choices[0]?.message,
-      );
+      // console.log(
+      //   "Response from groq for the query is ",
+      //   queryResponse.choices[0]?.message,
+      // );
       res.json({
         message: "Success ",
         query: userQuery,
@@ -374,10 +374,10 @@ async function handleQuery(req : any, res : any){
         model: "openai/gpt-oss-20b",
       });
 
-      console.log(
-        "Response from groq for the query is ",
-        queryResponse.choices[0]?.message,
-      );
+      // console.log(
+      //   "Response from groq for the query is ",
+      //   queryResponse.choices[0]?.message,
+      // );
       res.json({
         message: "Success ",
         query: userQuery,
