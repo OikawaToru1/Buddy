@@ -1,128 +1,147 @@
-import  { useState, useEffect  } from 'react'
+import { useState, useEffect } from 'react'
+import Loading from './Loader';
 
 interface QuizBoxProps {
-questions: {
-    question: string,
-    answer: string,
+  questions: {
+    question: string
+    answer: string
     options: string[]
-}[]
+  }[]
 }
 
-function QuizBox() {
-    const [questions, setQuestions ]= useState<QuizBoxProps['questions']>([]);
-    const [selectedOption, setSelectedOption] = useState<{ userchoice: string, question : string, answer: string }[]>([]);
-    const [activeOptions, setActiveOptions] = useState< string []>([]);
-    const [submitted, setSubmitted] = useState<boolean>(false);
-    const [score, setScore] = useState<number>(0);
+function QuizBox({ quizData, fileName }: { quizData: string | null; fileName: string | undefined }) {
+    const [loading, setLoading] = useState<boolean>(false);
+  const [questions, setQuestions] = useState<QuizBoxProps['questions']>([]);
+  
+  // Record<question, chosenOption> — isolated per question, no cross-highlight
+  const [activeOptions, setActiveOptions] = useState<Record<string, string>>({});
+  const [submitted, setSubmitted] = useState<boolean>(false);
+  const [score, setScore] = useState<number>(0);
+  
+  // Use real quizData, fall back to mock only if null
+  useEffect(() => {
+   if(!quizData && fileName){
+    setLoading(true);
+    return;
+   }
 
-    const handleSelectedOption = (current_question : string, option: string, answer : string) => {
-        
-        const question = current_question;
-        const userChoice = option;
-
-
-        // Check if the user has already selected an option for this question
-        const existingSelection = selectedOption.some((option)=> option.question == question);
-        if(existingSelection)
-        {
-            const filteredOptions = selectedOption.filter(option => option.question!== question)
-            filteredOptions.push({userchoice : userChoice, question, answer});
-            console.log("FilteredOptions are", filteredOptions)
-            setActiveOptions([]);
-            filteredOptions.map(option => (setActiveOptions(prev=> [...prev, option.userchoice])));
-            
-
-
-
-           
-        }
-        else{
-            setSelectedOption((prev)=> ([...prev, {userchoice: userChoice, question : question, answer : answer} ]));
-            setActiveOptions(prev=> [...prev, userChoice]);
-
-        }
-    }
+   try{
+    const parsed = JSON.parse(quizData);
+    console.log(parsed, "Parsed quiz data in useEffect", typeof(parsed));
+    setQuestions(parsed);
+    setLoading(false);
+   }catch(err){
+    console.log("Error in parsing quiz data in QuizBox", err);
+    setLoading(false);
+   }
+   finally{
+    setLoading(false);
+   }
     
+  }, [quizData]); // re-run when quizData changes
 
-    const checkResult = ()=>{
-        let score = 0;
-        selectedOption.map(options => {
-            if(options.answer == options.userchoice)
-            {
-                score = score + 1;
-            }
-        })
-        console.log("Final Score is ", score);
-        setScore(score);
-        setSubmitted(true);
-    }
+  const handleSelectedOption = (question: string, opt: string) => {
+    if (submitted) return; // lock after submit
+    // Simply overwrite the selection for this question — no array juggling needed
+    setActiveOptions(prev => ({ ...prev, [question]: opt }));
+  };
 
-    useEffect(() => {
-        // Mock data for quiz questions
-        const mockQuestions: QuizBoxProps['questions'] = [
-            {
-                question: "What is the capital of France?",
-                answer: "Paris",
-                options: ["Paris", "London", "Berlin", "Madrid"]
-            },
-            {
-                question: "What is 2 + 2?",
-                answer: "4",
-                options: ["3", "4", "5", "6"]
-            },
-            {
-                question: "Who wrote 'To Kill a Mockingbird'?",
-                answer: "Harper Lee",
-                options: ["Harper Lee", "Mark Twain", "Ernest Hemingway", "F. Scott Fitzgerald"],
-            }
-        ];
-        setQuestions(mockQuestions);
-    },[]);
+  const checkResult = () => {
+    if (submitted) return;
+    let count = 0;
+    questions.forEach(q => {
+      if (activeOptions[q.question] === q.answer) count++;
+    });
+    setScore(count);
+    setSubmitted(true);
+  };
+
   return (
-    <div className='relative flex flex-col justify-between'>
-        <h2 className=' font-bold text-2xl text-center py-4 border-b border-gray-600/50'>
-            {submitted ? `Your Score is ${score} / ${questions.length}` : "Take the Quiz!"}
-        </h2>
-        <p className='font-bold text-lg text-center py-4 border-b border-gray-600/50'>QuizBox</p>
-        <div className='w-full h-100  scroll-auto overflow-scroll'>
-            {questions.map((question, index)=>{
-                return (
-                  <div key={index} className=' bg-gray-800/50 border border-gray-600/50 flex flex-col m-2 p-4 rounded-lg gap-4'>
-                    <h1>{question.question}</h1>
-                   {submitted && <p className='text-sm text-gray-400'>Correct Answer is : {question.answer}</p>}
-                    <div className='grid grid-cols-2 gap-4'>
-                      {question.options.map((opt, index) => {
-                        return (
-                          <div
-                            key={index}
-                            onClick={() =>
-                              handleSelectedOption(
-                                question.question,
-                                opt,
-                                question.answer,
-                              )
-                            }
-                            className={`bg-gray-800/50 border border-gray-600/50 min-w-20 rounded-md px-2 py-1 flex justify-center items-center hover:bg-gray-600/50 hover:cursor-pointer hover:border-gray-800/50 transition-all ease-in-out  
-                            ${activeOptions.some((option) => option === opt) ? "bg-green-800" : "bg-gray-800/50 border-gray-600/50"}
-                            ${submitted ? (opt === question.answer ? "bg-green-700" : "bg-red-700") : ""}    
-                            `}
-                          >
-                            {opt}
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                );
-            })}
-        </div>
+    <div className="relative flex flex-col justify-between">
+      <h2 className="font-bold text-2xl text-center py-4 border-b border-gray-600/50">
+        {submitted
+          ? `Your Score: ${score} / ${questions.length}`
+          : `Take the Quiz${fileName ? ` on "${fileName}"` : ""}`}
+      </h2>
 
-        <button onClick={checkResult} className='w-full h-12.5 bg-gray-800/90 border border-gray-600/50 rounded-2xl text-center px-2 py-1 hover:bg-linear-to-r from-sky-500 to-blue-500 transition-all ease-in-out duration-300 cursor-pointer'>
-            Submit
-        </button>
+      <div className="w-full h-100 overflow-y-auto">
+        {loading ? (
+          <Loading />
+        ) : questions?.length === 0 ? (
+          "No quiz available. Please try creating a quiz from the options on the left."
+        ) : (
+          questions?.map((question, index) => {
+            const selected = activeOptions[question.question];
 
+            return (
+              <div
+                key={index}
+                className="bg-gray-800/50 border border-gray-600/50 flex flex-col m-2 p-4 rounded-lg gap-4"
+              >
+                <h1 className="font-medium">{question.question}</h1>
+
+                {submitted && (
+                  <p className="text-sm text-gray-400">
+                    Correct Answer:{" "}
+                    <span className="text-green-400">{question.answer}</span>
+                  </p>
+                )}
+
+                <div className="grid grid-cols-2 gap-4">
+                  {question.options.map((opt, optIndex) => {
+                    const isSelected = selected === opt;
+
+                    const highlight = submitted
+                      ? opt === question.answer
+                        ? "bg-green-700 border-green-600"
+                        : isSelected
+                          ? "bg-red-700 border-red-600"
+                          : "bg-gray-800/50 border-gray-600/50"
+                      : isSelected
+                        ? "bg-green-800 border-green-700"
+                        : "bg-gray-800/50 border-gray-600/50";
+
+                    return (
+                      <div
+                        key={optIndex}
+                        onClick={() =>
+                          handleSelectedOption(question.question, opt)
+                        }
+                        className={`
+                        border min-w-20 rounded-md px-2 py-1
+                        flex justify-center items-center
+                        transition-all ease-in-out
+                        ${
+                          submitted
+                            ? "cursor-default"
+                            : "hover:bg-gray-600/50 hover:cursor-pointer hover:border-gray-800/50"
+                        }
+                        ${highlight}
+                      `}
+                      >
+                        {opt}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            );
+          })
+        )}
+      </div>
+
+      <button
+        onClick={checkResult}
+        disabled={submitted}
+        className="w-full h-12 bg-gray-800/90 border border-gray-600/50 rounded-2xl
+          text-center px-2 py-1 transition-all ease-in-out duration-300
+          disabled:opacity-50 disabled:cursor-not-allowed
+          hover:bg-gradient-to-r hover:from-sky-500 hover:to-blue-500 cursor-pointer"
+      >
+        {submitted ? "Submitted" : "Submit"}
+      </button>
     </div>
-  )
+  );
 }
 
 export default QuizBox
