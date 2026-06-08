@@ -26,7 +26,7 @@ function QuizBox({ quizData, fileName }: { quizData: string | null; fileName: st
    }
 
    try{
-    const parsed = JSON.parse(quizData);
+    const parsed = JSON.parse(quizData!) as QuizBoxProps['questions'];
     console.log(parsed, "Parsed quiz data in useEffect", typeof(parsed));
     setQuestions(parsed);
     setLoading(false);
