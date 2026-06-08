@@ -25,23 +25,24 @@ function Signup() {
     const [showPopOut, setShowPopOut] = useState<boolean>(false);
     const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
+        // console.log("Form data on submit: ", formData);
         if(formData.email.trim() === '' || formData.password.trim() === '' || formData.username.trim() === '' || formData.fullName.trim() === '' || !formData.avatar) {
           setShowPopOut(true);
           return;
         }
         setLoading(true);
         if(formData.username && formData.email && formData.password) {
-            setFormData({
-              fullName : '',
-                username: '',
-                email: '',
-                password: '',
-                avatar: undefined,
-            });
-            axios.post("/api/auth/users/register", formData, {withCredentials : true})
+            const data = new FormData();
+            data.append("fullName", formData.fullName);
+            data.append("username", formData.username);
+            data.append("email", formData.email);
+            data.append("password", formData.password);
+            if(formData.avatar) {
+              data.append("avatar", formData.avatar);
+            }
+            axios.post("/api/users/register", data, {withCredentials : true})
               .then((response) => {
-                console.log("Sign up successful:", response.data);
+                // console.log("Sign up successful:", response.data);
                 navigate("/login");
                 setLoading(false);
                 // Handle successful sign up, e.g., redirect to login page
@@ -52,6 +53,13 @@ function Signup() {
               })
               .finally(() => {
                 setLoading(false);
+                setFormData({
+                  fullName: "",
+                  username: "",
+                  email: "",
+                  password: "",
+                  avatar: undefined,
+                });
               });
 
         } else {
