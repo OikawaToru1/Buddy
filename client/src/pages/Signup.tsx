@@ -40,7 +40,7 @@ function Signup() {
             if(formData.avatar) {
               data.append("avatar", formData.avatar);
             }
-            axios.post("/api/users/register", data, {withCredentials : true})
+            axios.post(`${import.meta.env.VITE_API_URL}/api/users/register`, data, {withCredentials : true})
               .then((response) => {
                 // console.log("Sign up successful:", response.data);
                 navigate("/login");

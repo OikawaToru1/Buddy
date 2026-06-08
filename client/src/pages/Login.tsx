@@ -33,7 +33,7 @@ function Login() {
       return;
     }
     
-    axios.post("/api/users/login", formData, {withCredentials : true})
+    axios.post(`${import.meta.env.VITE_API_URL}/api/users/login`, formData, {withCredentials : true})
       .then((response) => {
         // console.log("Login successful:", response.data);
         if(response.data && response.data.user){
@@ -56,7 +56,7 @@ function Login() {
   };
 
   const handleLogOut = () => {
-    axios.post("/api/auth/logout", {}, {withCredentials : true})
+    axios.post(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {}, {withCredentials : true})
       .then((response) => {
         // console.log("Logout successful:", response.data.message);
         dispatch(logout());
@@ -69,7 +69,7 @@ function Login() {
   };
 
     useEffect(() => {
-      axios.get('/api/users/test')
+      axios.get(`${import.meta.env.VITE_API_URL}/api/users/test`)
       .then(res=>{console.log("Test API response:", res.data)})
       .catch(err=>{console.error("Test API error:", err)});
     },[]);

@@ -23,7 +23,7 @@ function FileOptions(selectedFile : {fileName: string, path: string, fileId: str
 
     }
     setActiveOption("createQuiz");
-    axios.post("http://localhost:3000/api/files/create-quiz", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || "", path: selectedFile?.path || ""}, { withCredentials: true })
+    axios.post(`${import.meta.env.VITE_API_URL}/api/files/create-quiz`, {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || "", path: selectedFile?.path || ""}, { withCredentials: true })
       .then((res) => {
     
         console.log("Quiz created successfully: ", typeof(res.data.quiz), res.data.quiz);
@@ -38,7 +38,7 @@ function FileOptions(selectedFile : {fileName: string, path: string, fileId: str
     if(!isFileSelected) setShowPopup(true)
     setLoading(true);
     setActiveOption("generateSummary");
-    axios.post("http://localhost:3000/api/files/generate-summary", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || "", path: selectedFile?.path || ""}, { withCredentials: true })
+    axios.post(`${import.meta.env.VITE_API_URL}/api/files/generate-summary`, {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || "", path: selectedFile?.path || ""}, { withCredentials: true })
       .then((res) => {
         setLoading(false);
         console.log("Summary generated successfully: ", res.data);
@@ -56,7 +56,7 @@ function FileOptions(selectedFile : {fileName: string, path: string, fileId: str
     
     setLoading(true);
     setActiveOption("explainLikeIm5");
-    axios.post("http://localhost:3000/api/files/explain-like-im-5", {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || "", path: selectedFile?.path || ""}, { withCredentials: true })
+    axios.post(`${import.meta.env.VITE_API_URL}/api/files/explain-like-im-5`, {fileName: selectedFile?.fileName || "", fileId: selectedFile?.fileId || "", path: selectedFile?.path || ""}, { withCredentials: true })
       .then((res) => {
         setLoading(false);
         console.log("Explanation generated successfully: ", res.data);

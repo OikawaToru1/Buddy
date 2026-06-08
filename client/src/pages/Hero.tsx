@@ -44,7 +44,7 @@ function Hero() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:3000/api/files", { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/api/files`, { withCredentials: true })
       .then((res) => {
         res.data.fileHistory?.map((file: any) => {
           setFiles((prevFiles) => [

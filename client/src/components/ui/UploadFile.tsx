@@ -28,7 +28,7 @@ function UploadFile({ onFileUpload }: UploadFileProps) {
       if (formData) {
         setLoading(true);
         axios
-          .post("http://localhost:3000/api/files", formData,{ withCredentials: true })
+          .post(`${import.meta.env.VITE_API_URL}/api/files`, formData,{ withCredentials: true })
           .then((res) => {
             const newFile = { fileName: res.data.data.fileName, path: res.data.data.path, fileId: res.data.data.fileId };
             onFileUpload(newFile);

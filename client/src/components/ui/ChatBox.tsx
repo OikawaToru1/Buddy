@@ -8,7 +8,7 @@ function ChatBox(selectedFile : {fileName: string, path: string, fileId: string}
     const [queries, setQueries] = useState<{query: string, response: string}[]>([]);
   const handleSubmit  = () => {
     setConvo(prev => [...prev, {from: "You", data: query}]);
-    axios.post("http://localhost:3000/api/files/query", {query, fileId: selectedFile?.fileId || "" , fileName : selectedFile?.fileName || "", path : selectedFile?.path || "", conversationContext: convo}, { withCredentials: true })
+    axios.post(`${import.meta.env.VITE_API_URL}/api/files/query`, {query, fileId: selectedFile?.fileId || "" , fileName : selectedFile?.fileName || "", path : selectedFile?.path || "", conversationContext: convo}, { withCredentials: true })
       .then((res) => {
        
           setConvo(prev => [...prev, {from: "Buddy", data: res.data.response}]);
