@@ -8,16 +8,21 @@ import {Provider} from 'react-redux'
 import {store} from './rtk/store.js'
 import LandingPage from './pages/LandingPage.tsx'
 import About from './pages/About.tsx'
+import { Test } from './pages/Test.tsx'
+import ProtectedRoute from './components/layout/ProtectedRoute.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <Provider store={store}>
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path = "/home" element={<App/>}/>
+        <Route element={<ProtectedRoute />}>
+          <Route path="/home" element={<App />} />
+        </Route>
         <Route path="/signup" element={<Signup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/about" element={<About />} />
+        <Route path="/test" element={<Test />} />
       </Routes>
     </BrowserRouter>
   </Provider>,
