@@ -1,5 +1,4 @@
 import {Outlet, Navigate} from "react-router";
-import authSlice from "../../rtk/slice/authSlice";
 import type { RootState } from "../../rtk/store";
 import { useSelector } from "react-redux";
 
