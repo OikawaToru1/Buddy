@@ -73,7 +73,7 @@ function Login() {
       authState && navigate("/home");
 
       axios
-        .get(`http://localhost:3000/api/users`)
+        .get(`${import.meta.env.VITE_API_URL}/api/users/test`, { withCredentials: true })
         .then((res) => {
           console.log("Test API response:", res.data);
         })
