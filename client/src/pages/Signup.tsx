@@ -42,7 +42,7 @@ function Signup() {
             }
             axios.post(`${import.meta.env.VITE_API_URL}/api/users/register`, data, {withCredentials : true})
               .then((response) => {
-                // console.log("Sign up successful:", response.data);
+                console.log("Sign up successful:", response.data);
                 navigate("/login");
                 setLoading(false);
                 // Handle successful sign up, e.g., redirect to login page
