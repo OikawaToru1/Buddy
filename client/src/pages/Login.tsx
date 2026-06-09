@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector,useDispatch } from "react-redux";
 import type { RootState } from "../rtk/store.js";
-import { loginSuccess, logout } from "../rtk/slice/authSlice";
+import { loginSuccess } from "../rtk/slice/authSlice";
 import { useNavigate } from "react-router";
 import Loader from "../components/ui/Loader";
 import PopOut from "../components/ui/PopOut";
@@ -71,7 +71,7 @@ function Login() {
 
     useEffect(() => {
       authState && navigate("/home");
-      
+
       axios
         .get(`http://localhost:3000/api/users`)
         .then((res) => {
