@@ -5,7 +5,6 @@ import {  useEffect, useState } from 'react';
 function ChatBox(selectedFile : {fileName: string, path: string, fileId: string} | null) {
     const [query, setQuery] = useState("");
     const [convo, setConvo] = useState<{from : string, data : string}[]>([]);
-    const [queries, setQueries] = useState<{query: string, response: string}[]>([]);
   const handleSubmit  = () => {
     setConvo(prev => [...prev, {from: "You", data: query}]);
     axios.post(`${import.meta.env.VITE_API_URL}/api/files/query`, {query, fileId: selectedFile?.fileId || "" , fileName : selectedFile?.fileName || "", path : selectedFile?.path || "", conversationContext: convo}, { withCredentials: true })
