@@ -18,6 +18,7 @@ function Login() {
     email: '',
     password: '',
   });
+  console.log(import.meta.env.VITE_API_URL);
   const authState = useSelector((state: RootState)=> state.auth.isAuthenticated);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -55,23 +56,30 @@ function Login() {
       
   };
 
-  const handleLogOut = () => {
-    axios.post(`${import.meta.env.VITE_API_URL}/api/auth/logout`, {}, {withCredentials : true})
-      .then((response) => {
-        // console.log("Logout successful:", response.data.message);
-        dispatch(logout());
-        // Handle successful logout, e.g., redirect to login page
-      })
-      .catch((error) => {
-        console.error("Logout failed:", error.response?.data || error.message);
-        // Handle logout failure, e.g., show error message to user
-      });
-  };
+  // const handleLogOut = () => {
+  //   axios.post(`${import.meta.env.VITE_API_URL}/api/users/logout`, {}, {withCredentials : true})
+  //     .then((response) => {
+  //       // console.log("Logout successful:", response.data.message);
+  //       dispatch(logout());
+  //       // Handle successful logout, e.g., redirect to login page
+  //     })
+  //     .catch((error) => {
+  //       console.error("Logout failed:", error.response?.data || error.message);
+  //       // Handle logout failure, e.g., show error message to user
+  //     });
+  // };
 
     useEffect(() => {
-      axios.get(`${import.meta.env.VITE_API_URL}/api/users/test`)
-      .then(res=>{console.log("Test API response:", res.data)})
-      .catch(err=>{console.error("Test API error:", err)});
+      authState && navigate("/home");
+      
+      axios
+        .get(`http://localhost:3000/api/users`)
+        .then((res) => {
+          console.log("Test API response:", res.data);
+        })
+        .catch((err) => {
+          console.error("Test API error:", err);
+        });
     },[]);
   
 
