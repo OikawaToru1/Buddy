@@ -3,7 +3,7 @@ import axios from "axios";
 import { useSelector,useDispatch } from "react-redux";
 import type { RootState } from "../rtk/store.js";
 import { loginSuccess } from "../rtk/slice/authSlice";
-import { useNavigate } from "react-router";
+import { useNavigate , NavLink } from "react-router";
 import Loader from "../components/ui/Loader";
 import PopOut from "../components/ui/PopOut";
 
@@ -132,9 +132,9 @@ function Login() {
           </button>
           <p className="text-gray-300 flex gap-2 items-center">
             <span> Don't have an account?</span>
-            <a href="/signup" className="text-blue-500 hover:text-blue-700">
+            <NavLink to="/signup" className="text-blue-500 hover:text-blue-700">
               Sign Up
-            </a>
+            </NavLink>
           </p>
         </div>
       </form>

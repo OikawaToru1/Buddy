@@ -1,27 +1,28 @@
+import {NavLink} from 'react-router'
 export default function About() {
   return (
     <div className="min-h-screen bg-gray-950 text-gray-100 antialiased flex flex-col selection:bg-blue-500/30 selection:text-blue-200">
       {/* Universal Page Identity Top Section */}
       <div className="w-full bg-gray-900/30 border-b border-gray-900 py-8 text-center shrink-0 flex justify-between items-center px-6 lg:px-16">
         {/* Clickable Brand Title Label matching Landing Page styling */}
-        <a
-          href="/"
+        <NavLink
+          to="/"
           className="text-2xl font-bold tracking-tight select-none mb-1 hover:opacity-90 transition-opacity flex items-center justify-center gap-0.5"
         >
           Buddy<span className="text-blue-500 font-black">.</span>
-        </a>
+        </NavLink>
         <p className="text-sm text-gray-400 font-light tracking-wide uppercase flex flex-col gap-2" >
             About Us
           <span className=" text-[14px] font-bold text-gray-500 uppercase tracking-[0.2em] block">
             Platform Documentation
           </span>
         </p>
-        <a
-          href="/login"
+        <NavLink
+          to="/login"
           className="text-xl font-bold tracking-tight select-none mb-1 hover:opacity-90 transition-opacity flex items-center justify-center gap-0.5"
         >
           Login
-        </a>
+        </NavLink>
       </div>
 
       {/* Centered App Layout Container */}

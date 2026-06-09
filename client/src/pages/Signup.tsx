@@ -1,6 +1,6 @@
 import { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router";
+import { useNavigate, NavLink } from "react-router";
 import Loader from "../components/ui/Loader";
 import PopOut from "../components/ui/PopOut";
 
@@ -182,9 +182,9 @@ function Signup() {
 
             <p className="text-gray-300 flex gap-2 items-center">
               <span> Already have an account?</span>
-              <a href="/login" className="text-blue-500 hover:text-blue-700">
+              <NavLink to="/login" className="text-blue-500 hover:text-blue-700">
                 Login
-              </a>
+              </NavLink>
             </p>
           </div>
         </form>
