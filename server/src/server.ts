@@ -19,7 +19,7 @@ const port = 3000;
 
 app.use(
   cors({
-    origin: ["http://localhost:5173","https://buddy-psi-ruddy.vercel.app/","*"],
+    origin: "https://buddy-oikawa.vercel.app/",
     credentials: true,
   }),
 );
