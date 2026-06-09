@@ -1,4 +1,4 @@
-
+import {NavLink} from 'react-router'
 function LandingPage() {
 
 
@@ -15,18 +15,18 @@ function LandingPage() {
           </a>
         </h1>
         <nav className="flex items-center gap-8 text-sm font-medium text-gray-400">
-          <a
-            href="/about"
+          <NavLink
+            to="/about"
             className="hover:text-white transition-colors duration-200"
           >
             About
-          </a>
-          <a
-            href="/login"
+          </NavLink>
+          <NavLink
+            to="/login"
             className="text-gray-200 hover:text-white border border-gray-800 bg-gray-900/40 px-4 py-2 rounded-xl text-xs font-semibold tracking-wide transition-all duration-200 hover:border-gray-700 active:scale-95"
           >
             Sign In
-          </a>
+          </NavLink>
         </nav>
       </header>
 
@@ -66,12 +66,12 @@ function LandingPage() {
 
         {/* Call to Action Button */}
         <div className="flex flex-col sm:flex-row items-center gap-4 w-full justify-center">
-          <a
-            href="/signup"
+          <NavLink
+            to="/signup"
             className="w-full sm:w-auto text-sm font-semibold text-white bg-blue-600 hover:bg-blue-500 px-8 py-3.5 rounded-xl shadow-lg shadow-blue-600/10 transition-all duration-200 transform active:scale-[0.98] text-center"
           >
             Get Started for Free
-          </a>
+          </NavLink>
         </div>
       </main>
 
