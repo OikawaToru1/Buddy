@@ -36,9 +36,9 @@ function ChatBox(selectedFile : {fileName: string, path: string, fileId: string}
    }, []);
 
   return (
-    <div className="w-full md:w-2/3 h-full mr-4 bg-gray-800/50 rounded-xl border border-gray-600/50 flex flex-col justify-between shadow-2xl backdrop-blur-sm">
+    <div className="w-full md:w-2/3 h-125 md:h-full mr-4 bg-gray-800/50 rounded-xl border border-gray-600/50 flex flex-col justify-between shadow-2xl backdrop-blur-sm">
       {/* Header */}
-      <div className="border-b border-gray-700/60 h-[56px] flex items-center px-4 shrink-0">
+      <div className="border-b border-gray-700/60 h-14 flex items-center px-4 shrink-0">
         <h1 className="text-sm font-semibold text-gray-200 flex items-center gap-2 truncate">
          
           Chat Box:{" "}
