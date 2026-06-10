@@ -17,11 +17,10 @@ function Header() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    axios.post("/api/users/logout")
-      .then(() => {
-        dispatch(logout());
-        navigate("/login");
-      });
+    axios.post("https://buddy-xe7e.onrender.com/api/users/logout", { withCredentials: true }).then(() => {
+      dispatch(logout());
+      navigate("/login");
+    });
   }
   return (
     <nav className="sticky top-0 left-0 w-full h-[72px] flex justify-between items-center lg:px-16 md:px-8 px-6 bg-gray-900/80 backdrop-blur-md  border-gray-800 z-50">
