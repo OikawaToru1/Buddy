@@ -1,6 +1,6 @@
 # Buddy
 
-![alt text](https://file%2B.vscode-resource.vscode-cdn.net/Users/aniket/Developer/web%20dev/projects/Buddy/client/src/assets/buddyimg.png?version%3D1781097920395)
+![alt text](./client/src/assets/buddyimg.png)
 
 
 ---
