@@ -7,11 +7,23 @@ function ChatBox(selectedFile : {fileName: string, path: string, fileId: string}
     const [convo, setConvo] = useState<{from : string, data : string}[]>([]);
   const handleSubmit  = () => {
     setConvo(prev => [...prev, {from: "You", data: query}]);
-    axios.post(`${import.meta.env.VITE_API_URL}/api/files/query`, {query, fileId: selectedFile?.fileId || "" , fileName : selectedFile?.fileName || "", path : selectedFile?.path || "", conversationContext: convo}, { withCredentials: true })
+    axios
+      .post(
+        `https://buddy-xe7e.onrender.com/api/files/query`,
+        {
+          query,
+          fileId: selectedFile?.fileId || "",
+          fileName: selectedFile?.fileName || "",
+          path: selectedFile?.path || "",
+          conversationContext: convo,
+        },
+        { withCredentials: true },
+      )
       .then((res) => {
-       
-          setConvo(prev => [...prev, {from: "Buddy", data: res.data.response}]);
-
+        setConvo((prev) => [
+          ...prev,
+          { from: "Buddy", data: res.data.response },
+        ]);
       })
       .catch((err) => {
         console.log(err, "Error sending query");
