@@ -65,8 +65,8 @@ function Hero() {
 
 
   return (
-    <div className="flex flex-col gap-4 items-center md:flex-row   w-full h-[90vh]  text-white">
-      <div className="w-full md:w-1/3 h-full bg-gray-800/50 rounded-xl border border-gray-600/50 flex flex-col items-center gap-4">
+    <div className="flex flex-col gap-4 items-center md:flex-row   w-full min-h-screen  md:h-[90vh]  text-white">
+      <div className="w-full md:w-1/3 h-full bg-gray-800/50 py-2 rounded-xl border border-gray-600/50 flex flex-col items-center gap-4">
         <UploadFile
           onFileUpload={(newFile) =>
             setFiles((prevFiles) => [newFile, ...prevFiles])
