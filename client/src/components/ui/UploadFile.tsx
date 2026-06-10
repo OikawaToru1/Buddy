@@ -28,9 +28,7 @@ function UploadFile({ onFileUpload }: UploadFileProps) {
       if (formData) {
         setLoading(true);
         axios
-          .post(`https://buddy-xe7e.onrender.com/api/files`, formData, {
-            withCredentials: true,
-          })
+          .post(`https://buddy-xe7e.onrender.com/api/files`, formData,{ withCredentials: true, headers: { "Content-Type": "multipart/form-data" } })
           .then((res) => {
             const newFile = {
               fileName: res.data.data.fileName,
