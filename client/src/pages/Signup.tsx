@@ -40,7 +40,12 @@ function Signup() {
             if(formData.avatar) {
               data.append("avatar", formData.avatar);
             }
-            axios.post(`${import.meta.env.VITE_API_URL}/api/users/register`, data, {withCredentials : true})
+            axios
+              .post(
+                `https://buddy-xe7e.onrender.com/api/users/register`,
+                data,
+                { withCredentials: true },
+              )
               .then((response) => {
                 console.log("Sign up successful:", response.data);
                 navigate("/login");
@@ -48,7 +53,10 @@ function Signup() {
                 // Handle successful sign up, e.g., redirect to login page
               })
               .catch((error) => {
-                console.error("Sign up failed:", error.response?.data || error.message);
+                console.error(
+                  "Sign up failed:",
+                  error.response?.data || error.message,
+                );
                 // Handle sign up failure, e.g., show error message to user
               })
               .finally(() => {

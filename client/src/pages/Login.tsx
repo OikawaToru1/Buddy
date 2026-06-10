@@ -18,7 +18,6 @@ function Login() {
     email: '',
     password: '',
   });
-  console.log(import.meta.env.VITE_API_URL);
   const authState = useSelector((state: RootState)=> state.auth.isAuthenticated);
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -34,13 +33,14 @@ function Login() {
       return;
     }
     
-    axios.post(`${import.meta.env.VITE_API_URL}/api/users/login`, formData, {withCredentials : true})
+    axios
+      .post(`https://buddy-xe7e.onrender.com/api/users/login`, formData, {
+        withCredentials: true,
+      })
       .then((response) => {
-        // console.log("Login successful:", response.data);
-        if(response.data && response.data.user){
-          dispatch(loginSuccess(
-            response.data.user
-          ))
+        console.log("Login successful:", response.data);
+        if (response.data && response.data.user) {
+          dispatch(loginSuccess(response.data.user));
         }
         navigate("/home");
         setLoading(false);
@@ -73,7 +73,9 @@ function Login() {
       authState && navigate("/home");
 
       axios
-        .get(`${import.meta.env.VITE_API_URL}/api/users/test`, { withCredentials: true })
+        .get(`https://buddy-xe7e.onrender.com/api/users/`, {
+          withCredentials: true,
+        })
         .then((res) => {
           console.log("Test API response:", res.data);
         })

@@ -28,15 +28,21 @@ function UploadFile({ onFileUpload }: UploadFileProps) {
       if (formData) {
         setLoading(true);
         axios
-          .post(`${import.meta.env.VITE_API_URL}/api/files`, formData,{ withCredentials: true })
+          .post(`https://buddy-xe7e.onrender.com/api/files`, formData, {
+            withCredentials: true,
+          })
           .then((res) => {
-            const newFile = { fileName: res.data.data.fileName, path: res.data.data.path, fileId: res.data.data.fileId };
+            const newFile = {
+              fileName: res.data.data.fileName,
+              path: res.data.data.path,
+              fileId: res.data.data.fileId,
+            };
             onFileUpload(newFile);
           })
           .catch((err) => {
             console.log(err, "Error uploading file");
           })
-          .finally(() => {            
+          .finally(() => {
             setLoading(false);
           });
       }

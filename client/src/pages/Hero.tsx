@@ -44,8 +44,13 @@ function Hero() {
 
   useEffect(() => {
     axios
-      .get(`${import.meta.env.VITE_API_URL}/api/files`, { withCredentials: true })
+      .get("https://buddy-xe7e.onrender.com/api/files", { withCredentials: true })
       .then((res) => {
+        console.log(
+          res.data.message,
+          res.headers,
+          "Response from server when fetching files",
+        );
         res.data.fileHistory?.map((file: any) => {
           setFiles((prevFiles) => [
             ...prevFiles,
@@ -53,7 +58,9 @@ function Hero() {
           ]);
         });
       })
-      .catch((err) => console.log(err, "Error fetching files"));
+      .catch((err) => {
+        console.log(err, "Error fetching files");
+      });
   }, []);
 
 
