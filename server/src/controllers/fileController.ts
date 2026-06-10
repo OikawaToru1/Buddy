@@ -114,12 +114,14 @@ async function parsePDF(filePath : string){
 }
 
 async function uploadFile(req : any, res : any){
-  console.log(req)
+  console.log(req.file, "Received file in uploadFile controller", req.body);
   const user = req.user;
 
     try {
         const fileName = req.file.originalname;
-        const uploadResponse = await uploadToCloudinary(req.file.path);
+        const fileBuffer = req.file.buffer;
+        const uploadResponse = await uploadToCloudinary(fileBuffer, fileName);
+        console.log("Upload response from cloudinary is ", uploadResponse);
         console.log(uploadResponse?.secure_url);
         if(!uploadResponse?.secure_url) {
             res.status(500).json({success: false, message: "Failed to upload file to cloudinary"});
