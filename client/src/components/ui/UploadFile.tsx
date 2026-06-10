@@ -28,7 +28,7 @@ function UploadFile({ onFileUpload }: UploadFileProps) {
       if (formData) {
         setLoading(true);
         axios
-          .post(`https://buddy-xe7e.onrender.com/api/files`, formData,{ withCredentials: true, headers: { "Content-Type": "multipart/form-data" } })
+          .post(`${import.meta.env.VITE_API_URL}/api/files`, formData,{ withCredentials: true, headers: { "Content-Type": "multipart/form-data" } })
           .then((res) => {
             const newFile = {
               fileName: res.data.data.fileName,
@@ -42,9 +42,11 @@ function UploadFile({ onFileUpload }: UploadFileProps) {
           })
           .finally(() => {
             setLoading(false);
+            setFileSelected(false);
+            reset();
           });
       }
-      reset();
+      
     };
 
   useEffect(() => {

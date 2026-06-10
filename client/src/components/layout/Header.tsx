@@ -17,7 +17,7 @@ function Header() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    axios.post("https://buddy-xe7e.onrender.com/api/users/logout", { withCredentials: true }).then(() => {
+    axios.post(`${import.meta.env.VITE_API_URL}/api/users/logout`,{}, { withCredentials: true }).then(() => {
       dispatch(logout());
       navigate("/login");
     })

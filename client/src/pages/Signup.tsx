@@ -42,7 +42,7 @@ function Signup() {
             }
             axios
               .post(
-                `https://buddy-xe7e.onrender.com/api/users/register`,
+                `${import.meta.env.VITE_API_URL}/api/users/register`,
                 data,
                 { withCredentials: true },
               )

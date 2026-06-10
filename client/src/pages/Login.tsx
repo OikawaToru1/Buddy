@@ -34,7 +34,7 @@ function Login() {
     }
     
     axios
-      .post(`https://buddy-xe7e.onrender.com/api/users/login`, formData, {
+      .post(`${import.meta.env.VITE_API_URL}/api/users/login`, formData, {
         withCredentials: true,
       })
       .then((response) => {
@@ -73,11 +73,11 @@ function Login() {
       authState && navigate("/home");
 
       axios
-        .get(`https://buddy-xe7e.onrender.com/api/users/`, {
+        .get(`${import.meta.env.VITE_API_URL}/api/users/`, {
           withCredentials: true,
         })
         .then((res) => {
-          console.log("Test API response:", res.data);
+          console.log("Test API response:", res.data,import.meta.env.VITE_API_URL);
         })
         .catch((err) => {
           console.error("Test API error:", err);

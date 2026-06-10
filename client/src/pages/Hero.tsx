@@ -44,7 +44,7 @@ function Hero() {
 
   useEffect(() => {
     axios
-      .get("https://buddy-xe7e.onrender.com/api/files", { withCredentials: true })
+      .get(`${import.meta.env.VITE_API_URL}/api/files`, { withCredentials: true })
       .then((res) => {
         console.log(
           res.data.message,

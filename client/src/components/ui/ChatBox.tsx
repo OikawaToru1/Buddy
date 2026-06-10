@@ -9,7 +9,7 @@ function ChatBox(selectedFile : {fileName: string, path: string, fileId: string}
     setConvo(prev => [...prev, {from: "You", data: query}]);
     axios
       .post(
-        `https://buddy-xe7e.onrender.com/api/files/query`,
+        `${import.meta.env.VITE_API_URL}/api/files/query`,
         {
           query,
           fileId: selectedFile?.fileId || "",
