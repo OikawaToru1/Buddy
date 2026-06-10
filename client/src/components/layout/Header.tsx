@@ -20,6 +20,9 @@ function Header() {
     axios.post("https://buddy-xe7e.onrender.com/api/users/logout", { withCredentials: true }).then(() => {
       dispatch(logout());
       navigate("/login");
+    })
+    .catch((err) => {
+      console.log("Error logging out: ", err);
     });
   }
   return (
