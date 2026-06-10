@@ -114,7 +114,7 @@ async function parsePDF(filePath : string){
 }
 
 async function uploadFile(req : any, res : any){
-  console.log(req.file, "Received file in uploadFile controller", req.body);
+  // console.log(req.file, "Received file in uploadFile controller", req.body);
   const user = req.user;
 
     try {
