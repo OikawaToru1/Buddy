@@ -13,8 +13,8 @@ async function registerUser(req : any, res : any){
             return res.status(400).json({message : "All fields are required"});
         }
 
-         const profileImagePath = req.file.path;
-         if (!profileImagePath)
+         const profilePicture = req.file;
+         if (!profilePicture)
            return res
              .status(400)
              .json({ message: "Profile image is required" });
@@ -23,7 +23,7 @@ async function registerUser(req : any, res : any){
             return res.status(400).json({message : "User already exists"});
         }
 
-        const avtarURI = await uploadToCloudinary(profileImagePath);
+        const avtarURI = await uploadToCloudinary(profilePicture.buffer, profilePicture.originalname);
         if(!avtarURI) {
             return res.status(500).json({message : "Failed to upload profile image"});
         }
