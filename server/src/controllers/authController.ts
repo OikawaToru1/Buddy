@@ -1,5 +1,6 @@
 import  {User} from '../models/users.model.js';
 import {uploadToCloudinary} from '../utils/Cloudinary.js'
+import jwt from 'jsonwebtoken';
 
 async function registerUser(req : any, res : any){
     console.log('Received user registration request');
@@ -136,6 +137,51 @@ const logoutUser = async (req : any, res : any) => {
     .json({message : "User logged out successfully"});
 }
 
+const refreshAccessToken = async(req : any, res : any) => {
+    const refreshToken = req.cookies.refreshToken || req.body.refreshToken;
+    console.log("Received request to refresh access token with refresh token:", refreshToken, "Req.body for more details and req.header", req.body, req.headers);
+
+    if(!refreshToken){
+        return res.status(400).json({message : "Refresh token is required"});
+    }
+
+    try{
+        const decoded: any = jwt.verify(
+          refreshToken,
+          process.env.REFRESH_TOKEN_SECRET!,
+        );
+        console.log("Decoded refresh token:", decoded);
+        
+        const user = await User.findById(decoded._id);
+        if(!user || user.refreshToken !== refreshToken){
+            console.log("Invalid refresh token: User not found or token mismatch");
+            return res.status(401).json({message : "Invalid refresh token"});
+        }
+
+        if(user.refreshToken !== refreshToken){
+            console.log("Refresh token mismatch for user:", user._id);
+            return res.status(401).json({message : "Invalid refresh token"});
+        }
+
+        const {accessToken : newAccessToken , refreshToken : newRefreshToken} = await generateAccessAndRefreshTokens(user._id);
+        const options = {
+            httpOnly : true,
+            secure : true,
+            sameSite : "none" as const,
+        }
+
+        return res.status(200)
+        .cookie("accessToken", newAccessToken, options)
+        .cookie("refreshToken", newRefreshToken, options)
+        .json({message : "Access token refreshed successfully", accessToken : newAccessToken, refreshToken : newRefreshToken});
+
+    }
+    catch(error){
+        console.error("Error refreshing access token:", error);
+        return res.status(403).json({message : "Forbidden access"});
+    }
+}
 
 
-export {registerUser, loginUser, logoutUser};
+
+export {registerUser, loginUser, logoutUser, refreshAccessToken};
